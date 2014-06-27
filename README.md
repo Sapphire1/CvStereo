@@ -10,13 +10,17 @@ Dependencies
 ------------
 
 OpenCV
+
 PCL
+
 CvCoreTypes
+
 
 Developers
 ----------
 
 Dawid Kaczmarek (frikodwid@gmail.com)
+
 Łukasz Żmuda (lukzmuda1@gmail.com)
 
 Responsible person
