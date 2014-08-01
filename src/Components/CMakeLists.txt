@@ -2,3 +2,7 @@
 ADD_COMPONENT(DepthProcessor)
 ADD_COMPONENT(StereoEstimator)
 ADD_COMPONENT(DepthConverter)
+
+ADD_COMPONENT(StereoWriter)
+
+ADD_COMPONENT(StereoSequence)
