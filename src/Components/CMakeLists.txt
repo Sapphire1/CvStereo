@@ -2,3 +2,5 @@
 ADD_COMPONENT(DepthProcessor)
 
 ADD_COMPONENT(StereoWriter)
+
+ADD_COMPONENT(StereoSequence)

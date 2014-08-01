@@ -77,7 +77,7 @@ void StereoWriter::onSave() {
 		
 		tmp_name = std::string(dir) + std::string("/") + std::string(filename) + std::string(".yml");
 		cv::FileStorage file(tmp_name, cv::FileStorage::WRITE);
-		file << depth_xyz;
+		file << "img" << depth_xyz;
 				
 		
 		save = false;
