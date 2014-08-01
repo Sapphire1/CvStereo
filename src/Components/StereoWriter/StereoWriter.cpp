@@ -20,6 +20,11 @@ StereoWriter::StereoWriter(const std::string & name) :
 		dir("save.directory", std::string("./") ),
 		filename("save.filename", std::string("test") )   {
 
+    registerProperty(dir);
+    registerProperty(filename);
+    dir.setToolTip("Set directory to save images");
+    filename.setToolTip("Set image name (without extension)");
+
 }
 
 StereoWriter::~StereoWriter() {

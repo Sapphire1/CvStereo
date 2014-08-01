@@ -51,6 +51,12 @@
 					<param name="window_name">Depth Cloud</param>
 				</Component>
 			</Executor>
+			<Executor name="WriterExec" period="1">
+				<Component name="StereoWriter" type="CvStereo:StereoWriter" priority="1" bump="0">
+					<param name="save.directory">/home/dkaczmar/stereo/output/</param>
+					<param name="save.filename">stereo_img</param>
+				</Component>
+			</Executor>
 		</Subtask>	
 	</Subtasks>
 	
@@ -78,9 +84,11 @@
 		</Source>
 		<Source name="StereoEstimator.out_rgb_stereo">
 			<sink>DepthConventer.in_rgb_stereo</sink>
+			<sink>StereoWriter.in_rgb_stereo</sink>
 		</Source>
 		<Source name="StereoEstimator.out_depth_xyz">
 			<sink>DepthConventer.in_depth_xyz</sink>
+			<sink>StereoWriter.in_depth_xyz</sink>
 		</Source>
 		<Source name="DepthConventer.out_cloud_xyzrgb">
 			<sink>WindowCloud.in_cloud_xyzrgb</sink>
