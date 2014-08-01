@@ -4,8 +4,8 @@
  * \author Dawid Kaczmarek
  */
 
-#ifndef DEPTHPROCESSOR_HPP_
-#define DEPTHPROCESSOR_HPP_
+#ifndef STEREOESTIMATOR_HPP_
+#define STEREOESTIMATOR_HPP_
 
 #include "Component_Aux.hpp"
 #include "Component.hpp"
@@ -22,7 +22,7 @@
 #include <pcl/point_cloud.h>
 
 namespace Processors {
-namespace DepthProcessor {
+namespace StereoEstimator {
 
 static const string STEREO_BM = "STEREO_BM";
 static const string STEREO_SGBM = "STEREO_SGBM";
@@ -30,22 +30,22 @@ static const string STEREO_HH = "STEREO_HH";
 //static const string STEREO_VAR = "STEREO_VAR";
 
 /*!
- * \class DepthProcessor
- * \brief DepthProcessor processor class.
+ * \class StereoEstimator
+ * \brief StereoEstimator processor class.
  *
- * DepthProcessor processor.
+ * StereoEstimator processor.
  */
-class DepthProcessor: public Base::Component {
+class StereoEstimator: public Base::Component {
 public:
 	/*!
 	 * Constructor.
 	 */
-	DepthProcessor(const std::string & name = "DepthProcessor");
+    StereoEstimator(const std::string & name = "StereoEstimator");
 
 	/*!
 	 * Destructor
 	 */
-	virtual ~DepthProcessor();
+    virtual ~StereoEstimator();
 
 	/*!
 	 * Prepare components interface (register streams and handlers).
@@ -88,10 +88,10 @@ protected:
 	Base::DataStreamIn<Types::CameraInfo> r_in_cam_info;
 
 	// Output data streams
+    Base::DataStreamOut<cv::Mat> out_rgb_stereo;
 	Base::DataStreamOut<cv::Mat> out_depth_map;
-	Base::DataStreamOut<cv::Mat> out_left_dispared;
-    Base::DataStreamOut<cv::Mat> out_right_dispared;
-    Base::DataStreamOut<pcl::PointCloud<pcl::PointXYZRGB>::Ptr > out_cloud_xyzrgb;
+    Base::DataStreamOut<cv::Mat> out_depth_xyz;
+
 
 	// Properties
 	Base::Property<string> algorythm_type;
@@ -116,12 +116,12 @@ protected:
 	void CalculateDepthMap();
 };
 
-} //: namespace DepthProcessor
+} //: namespace StereoEstimator
 } //: namespace Processors
 
 /*
  * Register processor component.
  */
-REGISTER_COMPONENT("DepthProcessor", Processors::DepthProcessor::DepthProcessor)
+REGISTER_COMPONENT("StereoEstimator", Processors::StereoEstimator::StereoEstimator)
 
-#endif /* DEPTHPROCESSOR_HPP_ */
+#endif /* STEREOESTIMATOR_HPP_ */

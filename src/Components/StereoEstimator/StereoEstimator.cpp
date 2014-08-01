@@ -7,7 +7,7 @@
 #include <memory>
 #include <string>
 
-#include "DepthProcessor.hpp"
+#include "StereoEstimator.hpp"
 #include "Common/Logger.hpp"
 #include <Types/MatrixTranslator.hpp>
 
@@ -15,9 +15,9 @@
 #include <boost/format.hpp>
 
 namespace Processors {
-namespace DepthProcessor {
+namespace StereoEstimator {
 
-DepthProcessor::DepthProcessor(const std::string & name) :
+StereoEstimator::StereoEstimator(const std::string & name) :
 		Base::Component(name),
         numberOfDisparities("numberOfDisparities", int(0)),
         SADWindowSize("SADWindowSize (MUST BE ODD >= 1)", int(5)),
@@ -64,48 +64,47 @@ DepthProcessor::DepthProcessor(const std::string & name) :
     registerProperty(textureThreshold);
 }
 
-DepthProcessor::~DepthProcessor() {
+StereoEstimator::~StereoEstimator() {
 	if (sgbm != 0 ) delete sgbm;
 	if (bm != 0 ) delete bm;
 }
 
-void DepthProcessor::prepareInterface() {
+void StereoEstimator::prepareInterface() {
 	// Register data streams, events and event handlers HERE!
 	registerStream("l_in_img", &l_in_img);
 	registerStream("r_in_img", &r_in_img);
 	registerStream("l_cam_info", &l_in_cam_info);
 	registerStream("r_cam_info", &r_in_cam_info);
-	registerStream("out_depth_map", &out_depth_map);
-	registerStream("out_left", &out_left_dispared);
-    registerStream("out_right", &out_right_dispared);
-    registerStream("out_cloud_xyzrgb", &out_cloud_xyzrgb);
+    registerStream("out_rgb_stereo", &out_rgb_stereo);
+    registerStream("out_depth_map", &out_depth_map);
+    registerStream("out_depth_xyz", &out_depth_xyz);
 
 	// Register handlers
-	h_CalculateDepthMap.setup(boost::bind(&DepthProcessor::CalculateDepthMap, this));
+    h_CalculateDepthMap.setup(boost::bind(&StereoEstimator::CalculateDepthMap, this));
 	registerHandler("CalculateDepthMap", &h_CalculateDepthMap);
 	addDependency("CalculateDepthMap", &l_in_img);
 	addDependency("CalculateDepthMap", &r_in_img);
 }
 
-bool DepthProcessor::onInit() {
+bool StereoEstimator::onInit() {
     sgbm = new cv::StereoSGBM();
     bm = new cv::StereoBM();
 	return true;
 }
 
-bool DepthProcessor::onFinish() {
+bool StereoEstimator::onFinish() {
 	return true;
 }
 
-bool DepthProcessor::onStop() {
+bool StereoEstimator::onStop() {
 	return true;
 }
 
-bool DepthProcessor::onStart() {
+bool StereoEstimator::onStart() {
 	return true;
 }
 
-void DepthProcessor::CalculateDepthMap() {
+void StereoEstimator::CalculateDepthMap() {
 	LOG(LINFO) << "Init CalculateDepthMap";
 	cv::Mat oLeftImage(l_in_img.read());
 	cv::Mat oRightImage(r_in_img.read());
@@ -151,8 +150,6 @@ void DepthProcessor::CalculateDepthMap() {
     LOG(LINFO) << "Size " << img_size.height << "x"<<img_size.width;
 
     cv::stereoRectify( M1, D1, M2, D2, img_size, R, T, R1, R2, P1, P2, Q, cv::CALIB_ZERO_DISPARITY, -1, img_size, &roi1, &roi2 );
-
-
 
     LOG(LINFO) << "R1 "<< R1;
     LOG(LINFO) << "P1 "<< P1;
@@ -220,47 +217,20 @@ void DepthProcessor::CalculateDepthMap() {
 
     LOG(LINFO) << "Generating depth point cloud";
     cv::Mat xyz;
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-    uint32_t pr, pg, pb;
     reprojectImageTo3D(disp8, xyz, Q, true);
-    const double max_z = 1.0e4;
-    for(int y = 0; y < xyz.rows; y++)
-    {
-        uchar* rgb_ptr = oLeftRectified.ptr<uchar>(y);
-        for(int x = 0; x < xyz.cols; x++)
-        {
-            cv::Vec3f point = xyz.at<cv::Vec3f>(y, x);
-            if(fabs(point[2] - max_z) < FLT_EPSILON || fabs(point[2]) > max_z) continue;
-
-
-            //Get RGB info
-            pb = rgb_ptr[3*x];
-            pg = rgb_ptr[3*x+1];
-            pr = rgb_ptr[3*x+2];
-
-            //Insert info into point cloud structure
-            pcl::PointXYZRGB point1;
-            point1.x = point[0];
-            point1.y = point[1];
-            point1.z = -point[2];
-            uint32_t rgb = (static_cast<uint32_t>(pr) << 16 | static_cast<uint32_t>(pg) << 8 | static_cast<uint32_t>(pb));
-            point1.rgb = *reinterpret_cast<float*>(&rgb);
-            cloud->push_back(point1);
-        }
-    }
 
     LOG(LINFO) << "Writing to data stream";
+
     out_depth_map.write(disp8);
-    out_left_dispared.write(oLeftRectified);
-    out_right_dispared.write(oRightRectified);
-    out_cloud_xyzrgb.write(cloud);
+    out_rgb_stereo.write(oLeftRectified);
+    out_depth_xyz.write(xyz);
 	} catch (...)
 	{
 		LOG(LERROR) << "Error occured in processing input";
 	}
 }
 
-void DepthProcessor::generateQ(const cv::Mat& leftPMatrix, const cv::Mat& rightPMatrix, cv::Mat& Q) {
+void StereoEstimator::generateQ(const cv::Mat& leftPMatrix, const cv::Mat& rightPMatrix, cv::Mat& Q) {
     double rFx = rightPMatrix.at<double>(0,0);
     double Tx = rightPMatrix.at<double>(0,3) / -rFx;
     double rCx = rightPMatrix.at<double>(0,2);
@@ -276,5 +246,5 @@ void DepthProcessor::generateQ(const cv::Mat& leftPMatrix, const cv::Mat& rightP
     Q.data[3,3] = (rCx - lCx) / Tx;
 }
 
-} //: namespace DepthProcessor
+} //: namespace StereoEstimator
 } //: namespace Processors

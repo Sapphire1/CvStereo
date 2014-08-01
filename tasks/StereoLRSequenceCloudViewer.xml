@@ -18,19 +18,18 @@
 		<Subtask name="Processing">
 			<Executor name="ExecDisp" period="1">
 				<Component name="NextImageTrigger" type="CvBasic:Trigger" priority="1" bump="0">
-					<param name="">1</param>
 				</Component>
 				<Component name="SequenceLeft" type="CvBasic:Sequence" priority="2" bump="0">
-					<param name="sequence.directory">/home/dkaczmar/stereo/left/</param>
+					<param name="sequence.directory">/home/dkaczmar/stereo/inka_stereo/left/</param>
 					<param name="sequence.pattern">left*.*</param>
 					<param name="mode.loop">1</param>
-					<param name="mode.triggered">1</param>	
+					<param name="mode.triggered">1</param>						
 				</Component>
 				<Component name="SequenceRight" type="CvBasic:Sequence" priority="3" bump="0">
-					<param name="sequence.directory">/home/dkaczmar/stereo/right/</param>
+					<param name="sequence.directory">/home/dkaczmar/stereo/inka_stereo/right/</param>
 					<param name="sequence.pattern">right*.*</param>
 					<param name="mode.loop">1</param>
-					<param name="mode.triggered">1</param>						
+					<param name="mode.triggered">1</param>					
 				</Component>
 				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
 					<param name="data_file">/home/dkaczmar/stereo/info/left.yml</param>
@@ -38,24 +37,18 @@
 				<Component name="CameraInfoRight" type="CvCoreTypes:CameraInfoProvider" priority="5" bump="0">
 					<param name="data_file">/home/dkaczmar/stereo/info/right.yml</param>
 				</Component>
-				<Component name="DepthCalculator" type="CameraPGR:DepthProcessor" priority="6" bump="0">
+				<Component name="StereoEstimator" type="CvStereo:StereoEstimator" priority="6" bump="0">
+					<param name="minDisparity">160</param>
+					<param name="numberOfDisparities">320</param>
+					<param name="uniquenessRatio">25</param>
 				</Component>
-				<Component name="PCDWriter" type="PCL:PCDWriter" priority="9" bump="0">
-					<param name="filename">/home/dkaczmar/stereo/cloud/output.pcd</param>
+				<Component name="DepthConventer" type="CvStereo:DepthConventer" priority="6" bump="0">
 				</Component>
+
 			</Executor>
-			<Executor name="DisplayExec" period="0.5">
-				<Component name="WindowLeft" type="CvBasic:CvWindow" priority="7" bump="0">
-					<param name="count">1</param>
-					<param name="title">LeftImage</param>
-				</Component>
-				<Component name="WindowRight" type="CvBasic:CvWindow" priority="8" bump="0">
-					<param name="count">1</param>
-					<param name="title">RightImage</param>
-				</Component>
-				<Component name="WindowDepth" type="PCL:CloudViewer" priority="9" bump="0">
-					<param name="count">1</param>
-					<param name="title">Depth Cloud</param>
+			<Executor name="DisplayExec" period="1">
+				<Component name="WindowCloud" type="PCL:CloudViewer" priority="1" bump="0">
+					<param name="window_name">Depth Cloud</param>
 				</Component>
 			</Executor>
 		</Subtask>	
@@ -72,26 +65,25 @@
 			<sink>SequenceRight.in_trigger</sink>
 		</Source>
 		<Source name="SequenceLeft.out_img">
-			<sink>DepthCalculator.l_in_img</sink>
+			<sink>StereoEstimator.l_in_img</sink>
 		</Source>
 		<Source name="SequenceRight.out_img">
-			<sink>DepthCalculator.r_in_img</sink>
+			<sink>StereoEstimator.r_in_img</sink>
 		</Source>
 		<Source name="CameraInfoLeft.out_camera_info">
-			<sink>DepthCalculator.l_cam_info</sink>
+			<sink>StereoEstimator.l_cam_info</sink>
 		</Source>
 		<Source name="CameraInfoRight.out_camera_info">
-			<sink>DepthCalculator.r_cam_info</sink>
+			<sink>StereoEstimator.r_cam_info</sink>
 		</Source>
-		<Source name="DepthCalculator.out_left">
-			<sink>WindowLeft.in_img</sink>
+		<Source name="StereoEstimator.out_rgb_stereo">
+			<sink>DepthConventer.in_rgb_stereo</sink>
 		</Source>
-		<Source name="DepthCalculator.out_right">
-			<sink>WindowRight.in_img</sink>
+		<Source name="StereoEstimator.out_depth_xyz">
+			<sink>DepthConventer.in_depth_xyz</sink>
 		</Source>
-		<Source name="DepthCalculator.out_cloud_xyzrgb">
-			<sink>WindowDepth.in_cloud_xyzrgb</sink>
-			<sink>PCDWriter.in_cloud_xyzrgb</sink>
+		<Source name="DepthConventer.out_cloud_xyzrgb">
+			<sink>WindowCloud.in_cloud_xyzrgb</sink>
 		</Source>
 	</DataStreams>
 </Task>
