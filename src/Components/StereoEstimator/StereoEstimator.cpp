@@ -105,7 +105,7 @@ bool StereoEstimator::onStart() {
 }
 
 void StereoEstimator::CalculateDepthMap() {
-	LOG(LINFO) << "Init CalculateDepthMap";
+    LOG(LINFO) << "Init CalculateDepthMap";
 	cv::Mat oLeftImage(l_in_img.read());
 	cv::Mat oRightImage(r_in_img.read());
     if( algorythm_type == STEREO_BM ){
@@ -116,11 +116,11 @@ void StereoEstimator::CalculateDepthMap() {
     	oRightImage=RgreyMat;
     }
 	try {
-	LOG(LINFO) << "Get images from Data Streams";
+    LOG(LDEBUG) << "Get images from Data Streams";
 	Types::CameraInfo oLeftCamInfo(l_in_cam_info.read());
 	Types::CameraInfo oRightCamInfo(r_in_cam_info.read());
 
-	LOG(LINFO) << "Create bunch of fresh cv::Mat objects";
+    LOG(LDEBUG) << "Create bunch of fresh cv::Mat objects";
     cv::Rect roi1, roi2;
     //Reprojection matix - Q
     cv::Mat Q;
@@ -143,33 +143,33 @@ void StereoEstimator::CalculateDepthMap() {
     cv::Mat T = oRightCamInfo.translationMatrix();
 
 
-    LOG(LINFO) << "M1 "<< M1;
-    LOG(LINFO) << "M2 "<< M2;
-    LOG(LINFO) << "D1 "<< D1;
-    LOG(LINFO) << "D2 "<< D2;
-    LOG(LINFO) << "Size " << img_size.height << "x"<<img_size.width;
+    LOG(LDEBUG) << "M1 "<< M1;
+    LOG(LDEBUG) << "M2 "<< M2;
+    LOG(LDEBUG) << "D1 "<< D1;
+    LOG(LDEBUG) << "D2 "<< D2;
+    LOG(LDEBUG) << "Size " << img_size.height << "x"<<img_size.width;
 
     cv::stereoRectify( M1, D1, M2, D2, img_size, R, T, R1, R2, P1, P2, Q, cv::CALIB_ZERO_DISPARITY, -1, img_size, &roi1, &roi2 );
 
-    LOG(LINFO) << "R1 "<< R1;
-    LOG(LINFO) << "P1 "<< P1;
-    LOG(LINFO) << "R2 "<< R2;
-    LOG(LINFO) << "P2 "<< P2;
+    LOG(LDEBUG) << "R1 "<< R1;
+    LOG(LDEBUG) << "P1 "<< P1;
+    LOG(LDEBUG) << "R2 "<< R2;
+    LOG(LDEBUG) << "P2 "<< P2;
 
     cv::Mat map11, map12, map21, map22;
 
-    LOG(LINFO) << "Calculate left transformation maps";
+    LOG(LDEBUG) << "Calculate left transformation maps";
     cv::initUndistortRectifyMap(M1, D1, R1, P1, img_size, CV_16SC2, map11, map12);
-    LOG(LINFO) << "Calculate right transformation maps";
+    LOG(LDEBUG) << "Calculate right transformation maps";
     cv::initUndistortRectifyMap(M2, D2, R2, P2, img_size, CV_16SC2, map21, map22);
 
-    LOG(LINFO) << "Rectification of images";
+    LOG(LDEBUG) << "Rectification of images";
 	cv::Mat oLeftRectified;
 	cv::Mat oRightRectified;
     cv::remap(oLeftImage, oLeftRectified, map11, map12, cv::INTER_LINEAR);
     cv::remap(oRightImage, oRightRectified, map21, map22, cv::INTER_LINEAR);
 
-    LOG(LINFO) << "#ofDisparities: " << numberOfDisparities;
+    LOG(LDEBUG) << "#ofDisparities: " << numberOfDisparities;
 
     numberOfDisparities = numberOfDisparities > 0 ? numberOfDisparities : ((img_size.width/8) + 15) & -16;
 
@@ -202,7 +202,7 @@ void StereoEstimator::CalculateDepthMap() {
 
     cv::Mat disp, disp8;
 
-    LOG(LINFO) << "Calculating disparity";
+    LOG(LDEBUG) << "Calculating disparity";
     int64 t = cv::getTickCount();
     if( algorythm_type == STEREO_BM )
         bm->operator ()(oLeftRectified, oRightRectified, disp);
@@ -210,16 +210,16 @@ void StereoEstimator::CalculateDepthMap() {
         sgbm->operator ()(oLeftRectified, oRightRectified, disp);
     t = cv::getTickCount() - t;
     float time = t * 1000/cv::getTickFrequency();
-    LOG(LINFO) << boost::format("Time elapsed: %1%ms\n") % time;
+    LOG(LINFO) << boost::format("Calculating disparity : Time elapsed: %1%ms") % time;
 
-    LOG(LINFO) << "Converting disparity to depth image";
+    LOG(LDEBUG) << "Converting disparity to depth image";
     disp.convertTo(disp8, CV_8U, 255/(numberOfDisparities*16.));
 
-    LOG(LINFO) << "Generating depth point cloud";
+    LOG(LDEBUG) << "Generating depth point cloud";
     cv::Mat xyz;
     reprojectImageTo3D(disp8, xyz, Q, true);
 
-    LOG(LINFO) << "Writing to data stream";
+    LOG(LDEBUG) << "Writing to data stream";
 
     out_depth_map.write(disp8);
     out_rgb_stereo.write(oLeftRectified);

@@ -55,8 +55,11 @@ bool DepthRainbow::onStart() {
 typedef struct{uchar r; uchar g; uchar b;} color;
 
 void DepthRainbow::convertMonoToRainbow() {
+    unsigned short DEPTH_RANGE = 1536;
+
     cv::Mat data(in_depth_xyz.read());
     cv::Mat depth;
+    cv::Mat depth_8bit;
     cv::Mat out;
     float max_val = 0;
     float min_val = 0;
@@ -66,76 +69,75 @@ void DepthRainbow::convertMonoToRainbow() {
         max_val = point[2];
         min_val = point[2];
     }
+    depth.create(data.size(), CV_32F);
     for (int y = 0; y < data.rows; y++) {
         for (int x = 0; x < data.cols; x++) {
             cv::Vec3f point = data.at<cv::Vec3f>(y, x);
-            if (max_val < point[2] && point[2] != 10000) max_val = point[2];
+            if (max_val < point[2] & point[2] != 10000) max_val = point[2];
             if (min_val > point[2]) min_val = point[2];
+            depth.at<float>(y, x) = point[2];
         }
     }
-    LOG(LINFO) << "Min value = " << min_val;
-    LOG(LINFO) << "Max value = " << max_val;
 
-    delta = (max_val - min_val) / 255;
-    LOG(LINFO) << "Converting mono to rainbow";
+    depth.convertTo(depth_8bit, CV_8U);
+    delta = (max_val - min_val) / DEPTH_RANGE;
+    LOG(LDEBUG) << "Converting mono to rainbow";
     try {
-        depth.create(data.size(), CV_8U);
-        for (int y = 0; y < out.rows; y++) {
-            for (int x = 0; x < out.cols; x++) {
-                cv::Vec3f point = data.at<cv::Vec3f>(0, 0);
-                float floatDepth = point[2];
-                unsigned short curDepth = (floatDepth - min_val) / delta;
-                depth.at<color>(y, x) = point[2];
-            }
-        }
         out.create(data.size(), CV_8UC3);
         for (int y = 0; y < out.rows; y++) {
             for (int x = 0; x < out.cols; x++) {
                 color col;
                 col.r = col.g = col.b = 0;
-                cv::Vec3f point = data.at<cv::Vec3f>(0, 0);
-                float floatDepth = point[2];
-                unsigned short curDepth = (floatDepth - min_val) / delta;
-                int lb = curDepth & 0xff;
-                switch (curDepth>>8) {
-                case 0:
-                    col.b = 255;
-                    col.g = 255-lb;
-                    col.r = 255-lb;
-                    break;
-                case 1:
-                    col.b = 255;
-                    col.g = lb;
-                    col.r = 0;
-                    break;
-                case 2:
-                    col.b = 255-lb;
-                    col.g = 255;
-                    col.r = 0;
-                    break;
-                case 3:
-                    col.b = 0;
-                    col.g = 255;
-                    col.r = lb;
-                    break;
-                case 4:
-                    col.b = 0;
-                    col.g = 255-lb;
-                    col.r = 255;
-                    break;
-                case 5:
-                    col.b = 0;
-                    col.g = 0;
-                    col.r = 255-lb;
-                    break;
-                default:
+                float z_val = depth.at<float>(y, x);
+                z_val = ((z_val - min_val) / delta);
+                if (z_val >= 2048)
+                {
                     col.r = col.g = col.b = 0;
-                    break;
+                } else {
+                    unsigned short curDepth = (unsigned short) z_val;
+                    unsigned short lb = curDepth & 0xff;
+                    unsigned short rainbowPart = curDepth>>8;
+
+                    switch (rainbowPart) {
+                    case 0:
+                        col.b = 255;
+                        col.g = 255-lb;
+                        col.r = 255-lb;
+                        break;
+                    case 1:
+                        col.b = 255;
+                        col.g = lb;
+                        col.r = 0;
+                        break;
+                    case 2:
+                        col.b = 255-lb;
+                        col.g = 255;
+                        col.r = 0;
+                        break;
+                    case 3:
+                        col.b = 0;
+                        col.g = 255;
+                        col.r = lb;
+                        break;
+                    case 4:
+                        col.b = 0;
+                        col.g = 255-lb;
+                        col.r = 255;
+                        break;
+                    case 5:
+                        col.b = 0;
+                        col.g = 0;
+                        col.r = 255-lb;
+                        break;
+                    default:
+                        col.r = col.g = col.b = 0;
+                        break;
+                    }
                 }
-                if (point[2] == 10000) col.r = col.g = col.b = 0;
                 out.at<color>(y, x) = col;
             }
         }
+        LOG(LDEBUG) << "Z coord: Min value = " << min_val << ", Max value = " << max_val;
         out_depth_rainbow.write(out);
 	} catch (...)
 	{
