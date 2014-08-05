@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Task>
+	<!-- reference task information -->
+	<Reference>
+		<Author>
+			<name>Łukasz Żmuda</name>
+			<link></link>
+		</Author>
+	
+		<Description>
+			<brief>Images saver</brief>
+			<full>Display and save both images from cameras</full>
+		</Description>
+	</Reference>
+
+	<!-- task definition -->
+	<Subtasks>
+		<Subtask name="Processing">
+			<Executor name="ExecDisp" period="1">
+				<Component name="SourceLeft" type="CameraPGR:CameraPGR" priority="1" bump="-1">
+					<param name="camera_serial">13201068</param>
+					<param name="pixel_format">RGB</param>
+				</Component>
+				<Component name="SourceRight" type="CameraPGR:CameraPGR" priority="1" bump="-1">
+					<param name="camera_serial">13201080</param>
+					<param name="pixel_format">RGB</param>
+				</Component>
+			</Executor>
+			<Executor name="DisplayExec" period="0.5">
+				<Component name="WindowLeft" type="CvBasic:CvWindow" priority="7" bump="0">
+					<param name="count">1</param>
+					<param name="title">LeftImage</param>
+				</Component>
+				<Component name="WindowRight" type="CvBasic:CvWindow" priority="8" bump="0">
+					<param name="count">1</param>
+					<param name="title">RightImage</param>
+				</Component>		
+			</Executor>
+		</Subtask>	
+	</Subtasks>
+	
+	<!-- pipes connecting datastreams -->
+	<DataStreams>
+		<Source name="SourceLeft.out_img">
+			<sink>WindowLeft.in_img</sink>
+		</Source>
+		<Source name="SourceRight.out_img">
+			<sink>WindowRight.in_img</sink>
+		</Source>
+	</DataStreams>
+</Task>
+
