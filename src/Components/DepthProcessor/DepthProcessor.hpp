@@ -110,7 +110,7 @@ protected:
 	Base::EventHandler2 h_CalculateDepthMap;
 
 	cv::StereoSGBM* sgbm;
-	cv::StereoBM* bm;
+    cv::StereoBM* bm;
 	
 	// Handlers
 	void CalculateDepthMap();
