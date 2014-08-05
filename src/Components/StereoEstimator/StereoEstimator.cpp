@@ -247,9 +247,14 @@ void StereoEstimator::CalculateDepthMap() {
 
     out_depth_map.write(disp8(roi1));
     out_rgb_stereo.write(oLeftRectified(roi1));
-    cv::Mat xyz_roi(xyz, roi1);
-    out_depth_xyz.write(xyz_roi);
-	} catch (...)
+    if( algorythm_type == STEREO_SGBM )
+    {
+       out_depth_xyz.write(xyz(roi1));
+    } else
+    {
+        out_depth_xyz.write(xyz);
+    }
+    } catch (...)
 	{
 		LOG(LERROR) << "Error occured in processing input";
 	}
