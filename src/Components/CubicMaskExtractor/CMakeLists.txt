@@ -11,6 +11,6 @@ FILE(GLOB files *.cpp)
 ADD_LIBRARY(CubicMaskExtractor SHARED ${files})
 
 # Link external libraries
-TARGET_LINK_LIBRARIES(CubicMaskExtractor ${DisCODe_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS} )
+TARGET_LINK_LIBRARIES(CubicMaskExtractor ${DisCODe_LIBRARIES} ${PCL_LIBRARIES} ${OpenCV_LIBS})
 
 INSTALL_COMPONENT(CubicMaskExtractor)

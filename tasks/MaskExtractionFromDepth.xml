@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Task>
+<!-- reference task information -->
+<Reference>
+<Author>
+<name>Dawid Kaczmarek, Łukasz Żmuda</name>
+<link></link>
+</Author>
+
+<Description>
+<brief>Disparity viewer</brief>
+<full>Generate and displays depth map generated from stereo-images</full>
+</Description>
+</Reference>
+
+<!-- task definition -->
+<Subtasks>
+<Subtask name="Processing">
+<Executor name="ExecDisp" period="1">
+<!--Component name="NextImageTrigger" type="CvBasic:Trigger" priority="1" bump="0">
+</Component-->
+				  <Component name="SequenceLeft" type="CvBasic:Sequence" priority="2" bump="0">
+					<param name="sequence.directory">/home/dkaczmar/stereo/inka_stereo/left/</param>
+					<param name="sequence.pattern">left*.*</param>
+					<param name="mode.loop">1</param>
+					<param name="mode.triggered">1</param>	
+				  </Component>
+				  <Component name="SequenceRight" type="CvBasic:Sequence" priority="3" bump="0">
+					<param name="sequence.directory">/home/dkaczmar/stereo/inka_stereo/right/</param>
+					<param name="sequence.pattern">right*.*</param>
+					<param name="mode.loop">1</param>
+					<param name="mode.triggered">1</param>	
+				  </Component>
+				  <Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
+					<param name="data_file">/home/dkaczmar/stereo/info/left.yml</param>
+				  </Component>
+				  <Component name="CameraInfoRight" type="CvCoreTypes:CameraInfoProvider" priority="5" bump="0">
+					<param name="data_file">/home/dkaczmar/stereo/info/right.yml</param>
+				  </Component>
+				  <Component name="StereoEstimator" type="CvStereo:StereoEstimator" priority="6" bump="0">
+					<param name="minDisparity">160</param>
+					<param name="numberOfDisparities">320</param>
+					<param name="uniquenessRatio">25</param>
+				  </Component>
+				  <Component name="StereoDepthConverter" type="CvStereo:StereoDepthConverter" priority="7" bump="0">
+				  </Component>
+				  <Component name="CenterMassGenerator" type="CvStereo:CenterMassGenerator" priority="1" bump="0">
+				</Component>
+				 <Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="1" bump="0">
+					<param name="ransacFilter.XAxisMax_treshold">2.5</param>
+					<param name="ransacFilter.XAxisMin_treshold">2.5</param>
+					<param name="ransacFilter.YAxisMax_treshold">2.5</param>
+					<param name="ransacFilter.YAxisMin_treshold">2.5</param>
+					<param name="ransacFilter.ZAxisMax_treshold">2.5</param>
+					<param name="ransacFilter.ZAxisMin_treshold">2.5</param>
+				</Component>
+				<Component name="TransformParameterGenerator" type="CvStereo:TransformParameterGenerator" priority="1" bump="0">
+				</Component>
+				<Component name="DepthTransform" type="CvStereo:DepthTransform" priority="1" bump="0">
+				</Component>
+				<Component name="WindowTransformedRainbow" type="CvStereo:DepthRainbow" priority="4" bump="0">
+					<param name="count">1</param>
+					<param name="title">Transformed</param>
+				</Component>
+				<Component name="WindowXYZRainbow" type="CvStereo:DepthRainbow" priority="5" bump="0">
+					<param name="count">1</param>
+					<param name="title">XYZ</param>
+				</Component>
+</Executor>
+
+<Executor name="DisplayExec" period="1">
+				<Component name="WindowLeft" type="CvBasic:CvWindow" priority="1" bump="0">
+					<param name="count">1</param>
+					<param name="title">LeftImage</param>
+				</Component>
+				<Component name="WindowDepth" type="CvBasic:CvWindow" priority="2" bump="0">
+					<param name="count">1</param>
+					<param name="title">DisparityMap</param>
+				</Component>
+				<!--Component name="WindowMask" type="CvBasic:CvWindow" priority="3" bump="0">
+					<param name="count">1</param>
+					<param name="title">Mask</param>
+				</Component-->
+				<Component name="WindowTransformed" type="CvBasic:CvWindow" priority="4" bump="0">
+					<param name="count">1</param>
+					<param name="title">Transformed</param>
+				</Component>
+				<Component name="WindowXYZ" type="CvBasic:CvWindow" priority="5" bump="0">
+					<param name="count">1</param>
+					<param name="title">XYZ</param>
+				</Component>
+</Executor>
+</Subtask>	
+</Subtasks>
+
+<!-- connections between events and handelrs -->
+<Events>
+</Events>
+
+<!-- pipes connecting datastreams -->
+<DataStreams>
+<!--Source name="NextImageTrigger.out_trigger">
+<sink>SequenceLeft.in_trigger</sink>
+<sink>SequenceRight.in_trigger</sink>
+</Source-->
+		<Source name="SequenceLeft.out_img">
+		<sink>StereoEstimator.l_in_img</sink>
+		</Source>
+		<Source name="SequenceRight.out_img">
+		<sink>StereoEstimator.r_in_img</sink>
+		</Source>
+		<Source name="CameraInfoLeft.out_camera_info">
+		<sink>StereoEstimator.l_cam_info</sink>
+		</Source>
+		<Source name="CameraInfoRight.out_camera_info">
+		<sink>StereoEstimator.r_cam_info</sink>
+		</Source>
+		<Source name="StereoEstimator.out_left_rectified">
+		      <sink>WindowLeft.in_img</sink>
+		      <sink>StereoDepthConverter.in_rgb_img</sink>
+		</Source>
+		<Source name="StereoEstimator.out_depth_map">
+		    <sink>WindowDepth.in_img</sink>
+		</Source>
+		<Source name="StereoEstimator.out_image_xyz">
+		    <sink>CenterMassGenerator.in_image_xyz</sink>
+		    <sink>TransformParameterGenerator.in_image_xyz</sink>
+		    <sink>StereoDepthConverter.in_xyz_img</sink>
+		    <sink>DepthTransform.in_image_xyz</sink>
+		    <!--sink>WindowXYZ.in_img</sink-->
+ 		    <sink>WindowXYZRainbow.in_depth_xyz</sink>
+		    <!--sink>CubicMaskExtractor.in_image_xyz</sink-->
+		</Source>
+		<Source name="TransformParameterGenerator.out_rvec">
+			<sink>DepthTransform.in_rvec</sink>
+		</Source>
+		<Source name="TransformParameterGenerator.out_tvec">
+			<sink>DepthTransform.in_tvec</sink>
+		</Source>
+		<!--Source name="CenterMassGenerator.out_centerMassPoint">
+			<sink>CubicMaskExtractor.in_centerMassPoint</sink>
+		</Source-->
+		<Source name="DepthTransform.out_image_xyz">
+			<!--sink>CubicMaskExtractor.in_image_xyz</sink-->
+			<sink>WindowTransformedRainbow.in_depth_xyz</sink>
+		</Source>
+		<!--Source name="CubicMaskExtractor.out_mask">
+		    <sink>WindowMask.in_img</sink>
+		</Source-->
+		
+		<Source name="WindowTransformedRainbow.out_depth_rainbow">
+		    <sink>WindowTransformed.in_img</sink>
+		</Source>
+		<Source name="WindowXYZRainbow.out_depth_rainbow">
+		    <sink>WindowXYZ.in_img</sink>
+		</Source>
+</DataStreams>
+</Task>

@@ -37,13 +37,13 @@ void DepthTransform::prepareInterface() {
 	// Register data streams, events and event handlers HERE!
 	registerStream("in_tvec", &in_tvec);
 	registerStream("in_rvec", &in_rvec);
-	registerStream("in_cloud_xyz", &in_cloud_xyz);
-	registerStream("out_cloud_xyz", &out_cloud_xyz);
+	registerStream("in_image_xyz", &in_image_xyz);
+	registerStream("out_image_xyz", &out_image_xyz);
 
 	// Register handlers
 	h_DepthTransformation.setup(boost::bind(&DepthTransform::DepthTransformation, this));
 	registerHandler("DepthTransformation", &h_DepthTransformation);
-	addDependency("DepthTransformation", &in_cloud_xyz);
+	addDependency("DepthTransformation", &in_image_xyz);
 
 }
 
@@ -66,123 +66,116 @@ bool DepthTransform::onStart() {
 
 void DepthTransform::DepthTransformation() {
 	try{
+	  
 	  HomogMatrix hm;
-	  pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud = in_cloud_xyz.read();
+	  cv::Mat depth_image = in_image_xyz.read();
 	  cv::Mat tvec = in_tvec.read();
 	  cv::Mat rvec = in_rvec.read();
-	  
-	  pcl::PointCloud<pcl::PointXYZ>::Ptr transformed_cloud (new pcl::PointCloud<pcl::PointXYZ>);
-	  pcl::PointXYZ transformedPoint;
-	  ////////////zaslepka////////////////////////////
-	  /*
-	  // Fill in the input_cloud data
-	  pcl::PointCloud<pcl::PointXYZ>::Ptr input_cloud (new pcl::PointCloud<pcl::PointXYZ>);
-	  input_cloud->width  = 5;
-	  input_cloud->height = 1;
-	  input_cloud->points.resize (input_cloud->width * input_cloud->height);
+	  cv::Mat transformed_image;
+	  cv::Size depth_size = depth_image.size();
 
-	  for (size_t i = 0; i < input_cloud->points.size(); ++i)
-	  {
-	    input_cloud->points[i].x = 2.0f+i;
-	    input_cloud->points[i].y = 4.0f+i;
-	    input_cloud->points[i].z = 6.0f+i;
-	  }
-	  */
-	   //////////////koniec zaslepki///////////////////////
-  
-	  /*
-	  std::cout << "Cloud before transformating: " << std::endl;
-	  for (size_t i = 0; i < input_cloud->points.size(); ++i)
-	    std::cout << "    " << input_cloud->points[i].x << " "
-                        << input_cloud->points[i].y << " "
-                        << input_cloud->points[i].z << std::endl;
-	  
-	  */		
-	  //s = (p-t)*R'		
-	  //R=R'
-	  rvec = rvec.t();
+	  std::cout<<"tvec : "<<tvec<<"\n";
+	  std::cout<<"rvec : "<<rvec<<"\n";
 	  
 	  
-	  Eigen::Matrix4f transformation_matrix_translation = Eigen::Matrix4f::Identity();
-	  Eigen::Matrix4f transformation_matrix_rotation = Eigen::Matrix4f::Identity();
+	  cv::Mat tmp_img;// = cv::Mat(depth_image);
+	  tmp_img.create(depth_size, CV_32FC3);
+	  //////////////////////////////////////////////////////////////////////////
 	  
-	  
-	  // translation
-	  transformation_matrix_translation (0,0) = 1;
-	  transformation_matrix_translation (0,1) = 0;
-	  transformation_matrix_translation (0,2) = 0;
-	  transformation_matrix_translation (0,3) = -tvec.at<double>(0,0);
-	  
-	  transformation_matrix_translation (1,0) = 0;
-	  transformation_matrix_translation (1,1) = 1;
-	  transformation_matrix_translation (1,2) = 0;
-	  transformation_matrix_translation (1,3) = -tvec.at<double>(1,0);
-	  
-	  transformation_matrix_translation (2,0) = 0;
-	  transformation_matrix_translation (2,1) = 0;
-	  transformation_matrix_translation (2,2) = 1;
-	  transformation_matrix_translation (2,3) = -tvec.at<double>(2,0);
-	  
-	  transformation_matrix_translation (3,0) = 0;
-	  transformation_matrix_translation (3,1) = 0;
-	  transformation_matrix_translation (3,2) = 0;
-	  transformation_matrix_translation (3,3) = 1;
-	  
-	   std::cout<< "Rotation matrix :\n";
-	  std::cout<< "    | "<< transformation_matrix_translation (0,0)<<" "<< transformation_matrix_translation (0,1) << " "<<transformation_matrix_translation (0,2)<<" | \n" ;
-	  std::cout<< "R = | "<< transformation_matrix_translation (1,0)<<" "<< transformation_matrix_translation (1,1) << " "<<transformation_matrix_translation (1,2)<<" | \n" ;
-	  std::cout<< "    | "<< transformation_matrix_translation (2,0)<<" "<< transformation_matrix_translation (2,1) << " "<<transformation_matrix_translation (2,2)<<" | \n" ;
-	  std::cout<< "Translation vector :\n";
-	  std::cout<< "t = "<< transformation_matrix_translation (0,3) << " "<< transformation_matrix_translation (1,3) << " " << transformation_matrix_translation (2,3)<<"\n\n";
+	// iteracja po obrazie glebi, podstawienie pod maske odpowiednich pikseli
+        if (depth_image.isContinuous() && tmp_img.isContinuous()) {
+         depth_size.width *= depth_size.height;
+         depth_size.height = 1;
+        }
+        
+            float newX, newY, newZ;
+            depth_size.width *= 3;
+	
+	    
+	    ////////////////////////////////////////
+	    /*
+	    HomogMatrix hm;
 
-	  // transformation
-	  pcl::transformPointCloud (*input_cloud, *transformed_cloud, transformation_matrix_translation);
+	    hm.elements[0][0] = rvec.at<double>(0,0);
+	    hm.elements[0][1] = rvec.at<double>(0,1);
+	    hm.elements[0][2] = rvec.at<double>(0,2);
+	    hm.elements[0][3] = 0;
+	    
+	    hm.elements[1][0] = rvec.at<double>(1,0);
+	    hm.elements[1][1] = rvec.at<double>(1,1);
+	    hm.elements[1][2] = rvec.at<double>(1,2);
+	    hm.elements[1][3] = 0;
+	    
+	    hm.elements[2][0] = rvec.at<double>(2,0);
+	    hm.elements[2][1] = rvec.at<double>(2,1);
+	    hm.elements[2][2] = rvec.at<double>(2,2);
+	    hm.elements[2][3] = 0;
 
-	  
-	  input_cloud = transformed_cloud;
-	 
+	    hm.elements[3][0] = 0;
+	    hm.elements[3][1] = 0;
+	    hm.elements[3][2] = 0;
+	    hm.elements[3][3] = 1;
+	    
+	    */
+	
+	    ///////////////////////////////////////
+	    
+        for (int i = 0; i < depth_size.height; i++)
+        {
+            const float* depth_ptr = depth_image.ptr <float> (i);
+	    float* depth_ptr_tmp = tmp_img.ptr <float> (i);
+            int j, k = 0;
+	    int val = 0;
+	    
+            for (j = 0; j < depth_size.width; j += 3)
+            {
+		 // get x, y, z from depth_image
+		 float z= depth_ptr[j + 2];
+		 if(z==10000)
+		   continue;
+		 float x = depth_ptr[j];
+                float y = depth_ptr[j + 1];
+		 
+		// float x=1,y=5,z=10;
+		//std::cout<<"Bylo: "<<x<<" "<<y<<" "<<z<<"\n";
+		
+		x=x-tvec.at<double>(0,0);
+		y=y-tvec.at<double>(1,0);
+		z=z-tvec.at<double>(2,0);
+		//std::cout<<"Jest: "<<x<<" "<<y<<" "<<z<<"\n";
 
-	  // rotation
-	  transformation_matrix_rotation (0,0) = rvec.at<double>(0,0);
-	  transformation_matrix_rotation (0,1) = rvec.at<double>(0,1);
-	  transformation_matrix_rotation (0,2) = rvec.at<double>(0,2);
-	  transformation_matrix_rotation (0,3) = 0;
-	  
-	  transformation_matrix_rotation (1,0) = rvec.at<double>(1,0);
-	  transformation_matrix_rotation (1,1) = rvec.at<double>(1,1);
-	  transformation_matrix_rotation (1,2) = rvec.at<double>(1,2);
-	  transformation_matrix_rotation (1,3) = 0;
-	  
-	  transformation_matrix_rotation (2,0) = rvec.at<double>(2,0);
-	  transformation_matrix_rotation (2,1) = rvec.at<double>(2,1);
-	  transformation_matrix_rotation (2,2) = rvec.at<double>(2,2);
-	  transformation_matrix_rotation (2,3) = 0;
-	  
-	  transformation_matrix_rotation (3,0) = 0;
-	  transformation_matrix_rotation (3,1) = 0;
-	  transformation_matrix_rotation (3,2) = 0;
-	  transformation_matrix_rotation (3,3) = 1;
-	  
+		rvec=rvec.t();
+      		newX = x*rvec.at<double>(0,0) + y*rvec.at<double>(0,1)+z*rvec.at<double>(0,2);
+		newY = x*rvec.at<double>(1,0) + y*rvec.at<double>(1,1)+z*rvec.at<double>(1,2);
+		newZ = x*rvec.at<double>(2,0) + y*rvec.at<double>(2,1)+z*rvec.at<double>(2,2);
+		//std::cout<<"Jest po rotacji: "<<newX<<" "<<newY<<" "<<newZ<<"\n";
 
-	  std::cout<< "Rotation matrix :\n";
-	  std::cout<< "    | "<< transformation_matrix_rotation (0,0)<<" "<< transformation_matrix_rotation (0,1) << " "<<transformation_matrix_rotation (0,2)<<" | \n" ;
-	  std::cout<< "R = | "<< transformation_matrix_rotation (1,0)<<" "<< transformation_matrix_rotation (1,1) << " "<<transformation_matrix_rotation (1,2)<<" | \n" ;
-	  std::cout<< "    | "<< transformation_matrix_rotation (2,0)<<" "<< transformation_matrix_rotation (2,1) << " "<<transformation_matrix_rotation (2,2)<<" | \n" ;
-	  std::cout<< "Translation vector :\n";
-	  std::cout<< "t = "<< transformation_matrix_rotation (0,3) << " "<< transformation_matrix_rotation (1,3) << " " << transformation_matrix_rotation (2,3)<<"\n\n";
 
-	  // transformation
-	  pcl::transformPointCloud (*input_cloud, *transformed_cloud, transformation_matrix_rotation);
-
-	  /*
-	  std::cout << "Cloud after transformating: " << std::endl;
-	  for (size_t i = 0; i < transformed_cloud->points.size(); ++i)
-	    std::cout << "    " << transformed_cloud->points[i].x << " "
-                        << transformed_cloud->points[i].y << " "
-                        << transformed_cloud->points[i].z << std::endl;
-	  */
+		depth_ptr_tmp[j]=newX;
+                depth_ptr_tmp[j + 1]=newY;
+                depth_ptr_tmp[j + 2]=newZ;
+            }
+        }
+        /*
+        for (int i = 0; i < depth_size.height; i++)
+        {
+	    float* depth_ptr_tmp = tmp_img.ptr <float> (i);
+            int j, k = 0;
+	    int val = 0;
+	    
+            for (j = 0; j < depth_size.width; j += 3)
+            {
+		std::cout << "Czytam: "<<depth_ptr_tmp[j]<<" "<<depth_ptr_tmp[j + 1]<<" "<<depth_ptr_tmp[j + 2]<<"\n";
+            }
+        }
+        */
+        
+        
+        
+        
+        
 	  LOG(LINFO) << "Writing to data stream";
-	  out_cloud_xyz.write(transformed_cloud);
+	  out_image_xyz.write(tmp_img);
 	  
 	} catch (...)
 	{

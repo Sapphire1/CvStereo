@@ -101,11 +101,10 @@ protected:
 
 	// Input data streams
 
-	Base::DataStreamIn<pcl::PointCloud<pcl::PointXYZ>::Ptr> in_cloud_xyz;
+	Base::DataStreamIn <cv::Mat>  in_image_xyz;
 	Base::DataStreamIn <cv::Point3d> in_centerMassPoint;
 	// Output data streams
 	Base::DataStreamOut <cv::Mat> out_mask;
-	Base::DataStreamOut<pcl::PointCloud<pcl::PointXYZ>::Ptr> out_filtered_cloud;
 	
 	// Handlers
 	Base::EventHandler2 h_filter;
@@ -113,8 +112,6 @@ protected:
 	
 	// Handlers
 	void filter();
-	
-	cv::Mat tmp_img;
 
 };
 

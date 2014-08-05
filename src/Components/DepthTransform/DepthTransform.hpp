@@ -81,13 +81,16 @@ protected:
 
    
 	// Input data streams
-	Base::DataStreamIn <pcl::PointCloud<pcl::PointXYZ>::Ptr> in_cloud_xyz;
+	Base::DataStreamIn <cv::Mat> in_image_xyz;
 	Base::DataStreamIn <cv::Mat> in_rvec;
 	Base::DataStreamIn <cv::Mat> in_tvec;
 
 
 	// Output data streams
-	Base::DataStreamOut<pcl::PointCloud<pcl::PointXYZ>::Ptr > out_cloud_xyz;
+	Base::DataStreamOut<cv::Mat>  out_image_xyz;	
+        Base::DataStreamOut<pcl::PointCloud<pcl::PointXYZ>::Ptr > out_cloud_xyz_start;
+	Base::DataStreamOut<pcl::PointCloud<pcl::PointXYZ>::Ptr > out_cloud_xyz_stop;
+
 
 	// Properties
 	//Base::Property<string> algorythm_type;
