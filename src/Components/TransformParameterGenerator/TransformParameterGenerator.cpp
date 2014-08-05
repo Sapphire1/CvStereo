@@ -35,14 +35,14 @@ TransformParameterGenerator::~TransformParameterGenerator() {
 void TransformParameterGenerator::prepareInterface() {
 
 	// Register data streams, events and event handlers HERE!
-	registerStream("in_cloud_xyz", &in_cloud_xyz);
+	registerStream("in_image_xyz", &in_image_xyz);
 	registerStream("out_rvec", &out_rvec);
 	registerStream("out_tvec", &out_tvec);
 
 	// Register handlers
 	h_TransformMaticesGenerator.setup(boost::bind(&TransformParameterGenerator::TransformMaticesGenerator, this));
 	registerHandler("TransformMaticesGenerator", &h_TransformMaticesGenerator);
-	addDependency("TransformMaticesGenerator", &in_cloud_xyz);
+	addDependency("TransformMaticesGenerator", &in_image_xyz);
 
 }
 

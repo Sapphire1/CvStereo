@@ -78,7 +78,7 @@ protected:
    
 	// Input data streams
 
-	Base::DataStreamIn<pcl::PointCloud<pcl::PointXYZ>::Ptr> in_cloud_xyz;
+	Base::DataStreamIn<cv::Mat> in_image_xyz;
 
 	// Output data streams
 	Base::DataStreamOut <cv::Point3d> out_centerMassPoint;

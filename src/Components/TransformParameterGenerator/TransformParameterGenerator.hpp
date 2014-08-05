@@ -81,7 +81,7 @@ protected:
    
 	// Input data streams
 
-	Base::DataStreamIn<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> in_cloud_xyz;
+	Base::DataStreamIn<cv::Mat> in_image_xyz;
 
 	// Output data streams
 	Base::DataStreamOut <cv::Mat> out_rvec;

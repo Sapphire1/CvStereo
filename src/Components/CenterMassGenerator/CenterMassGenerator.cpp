@@ -33,13 +33,13 @@ CenterMassGenerator::~CenterMassGenerator() {
 void CenterMassGenerator::prepareInterface() {
 
 	// Register data streams, events and event handlers HERE!
-	registerStream("in_cloud_xyz", &in_cloud_xyz);
+	registerStream("in_image_xyz", &in_image_xyz);
 	registerStream("out_centerMassPoint", &out_centerMassPoint);
 
 	// Register handlers
 	h_CenterMassGeneration.setup(boost::bind(&CenterMassGenerator::CenterMassGeneration, this));
 	registerHandler("CenterMassGeneration", &h_CenterMassGeneration);
-	addDependency("CenterMassGeneration", &in_cloud_xyz);
+	addDependency("CenterMassGeneration", &in_image_xyz);
 
 }
 

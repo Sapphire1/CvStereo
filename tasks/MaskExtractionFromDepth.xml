@@ -42,8 +42,6 @@
 					<param name="numberOfDisparities">320</param>
 					<param name="uniquenessRatio">25</param>
 				  </Component>
-				  <Component name="StereoDepthConverter" type="CvStereo:StereoDepthConverter" priority="7" bump="0">
-				  </Component>
 				  <Component name="CenterMassGenerator" type="CvStereo:CenterMassGenerator" priority="1" bump="0">
 				</Component>
 				 <Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="1" bump="0">
@@ -115,17 +113,15 @@
 		<Source name="CameraInfoRight.out_camera_info">
 		<sink>StereoEstimator.r_cam_info</sink>
 		</Source>
-		<Source name="StereoEstimator.out_left_rectified">
+		<Source name="StereoEstimator.out_rgb_stereo">
 		      <sink>WindowLeft.in_img</sink>
-		      <sink>StereoDepthConverter.in_rgb_img</sink>
 		</Source>
-		<Source name="StereoEstimator.out_depth_map">
+		<Source name="StereoEstimator.out_depth_xyz">
 		    <sink>WindowDepth.in_img</sink>
 		</Source>
-		<Source name="StereoEstimator.out_image_xyz">
+		<Source name="StereoEstimator.out_rgb_stereo">
 		    <sink>CenterMassGenerator.in_image_xyz</sink>
 		    <sink>TransformParameterGenerator.in_image_xyz</sink>
-		    <sink>StereoDepthConverter.in_xyz_img</sink>
 		    <sink>DepthTransform.in_image_xyz</sink>
 		    <!--sink>WindowXYZ.in_img</sink-->
  		    <sink>WindowXYZRainbow.in_depth_xyz</sink>
