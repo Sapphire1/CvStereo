@@ -67,7 +67,7 @@ void TransformParameterGenerator::TransformMaticesGenerator() {
 	try{
 	  // 90 degrees rotation around Z axis and moving by 1 meter along X axis
 	  cv::Mat tvec = (cv::Mat_<double>(3,1) << 1, 0, 0);
-	  cv::Mat rvec = (cv::Mat_<double>(3,3) << 0, -1, 0, 1, 0, 0, 0, 0, 1);
+	  cv::Mat rvec = (cv::Mat_<double>(3,3) << 1, 0, 0, 0, 1, 0, 0, 1, 0); //180 X
 	  
 	  LOG(LINFO) << "Writing mask to data stream";
 	  out_tvec.write(tvec);

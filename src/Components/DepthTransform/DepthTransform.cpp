@@ -73,11 +73,8 @@ void DepthTransform::DepthTransformation() {
 	  cv::Mat rvec = in_rvec.read();
 	  cv::Mat transformed_image;
 	  cv::Size depth_size = depth_image.size();
-
 	  std::cout<<"tvec : "<<tvec<<"\n";
 	  std::cout<<"rvec : "<<rvec<<"\n";
-	  
-	  
 	  cv::Mat tmp_img;// = cv::Mat(depth_image);
 	  tmp_img.create(depth_size, CV_32FC3);
 	  //////////////////////////////////////////////////////////////////////////
@@ -130,11 +127,18 @@ void DepthTransform::DepthTransformation() {
             for (j = 0; j < depth_size.width; j += 3)
             {
 		 // get x, y, z from depth_image
-		 float z= depth_ptr[j + 2];
-		 if(z==10000)
-		   continue;
 		 float x = depth_ptr[j];
-                float y = depth_ptr[j + 1];
+                 float y = depth_ptr[j + 1];
+		 float z= depth_ptr[j + 2];
+		 
+		  if(z==10000)
+		  {
+		      depth_ptr_tmp[j]=x;
+		      depth_ptr_tmp[j + 1]=y;
+		      depth_ptr_tmp[j + 2]=z;
+		      continue;
+		  }
+
 		 
 		// float x=1,y=5,z=10;
 		//std::cout<<"Bylo: "<<x<<" "<<y<<" "<<z<<"\n";
@@ -149,7 +153,6 @@ void DepthTransform::DepthTransformation() {
 		newY = x*rvec.at<double>(1,0) + y*rvec.at<double>(1,1)+z*rvec.at<double>(1,2);
 		newZ = x*rvec.at<double>(2,0) + y*rvec.at<double>(2,1)+z*rvec.at<double>(2,2);
 		//std::cout<<"Jest po rotacji: "<<newX<<" "<<newY<<" "<<newZ<<"\n";
-
 
 		depth_ptr_tmp[j]=newX;
                 depth_ptr_tmp[j + 1]=newY;
