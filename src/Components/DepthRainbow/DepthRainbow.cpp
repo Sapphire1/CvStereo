@@ -56,24 +56,20 @@ typedef struct{uchar r; uchar g; uchar b;} color;
 
 void DepthRainbow::convertMonoToRainbow() {
     unsigned short DEPTH_RANGE = 1536;
+    unsigned short NAN_VALUE = 10000;
 
     cv::Mat data(in_depth_xyz.read());
     cv::Mat depth;
     cv::Mat depth_8bit;
     cv::Mat out;
     float max_val = 0;
-    float min_val = 0;
+    float min_val = NAN_VALUE;
     float delta;
-    {
-        cv::Vec3f point = data.at<cv::Vec3f>(0, 0);
-        max_val = point[2];
-        min_val = point[2];
-    }
     depth.create(data.size(), CV_32F);
     for (int y = 0; y < data.rows; y++) {
         for (int x = 0; x < data.cols; x++) {
             cv::Vec3f point = data.at<cv::Vec3f>(y, x);
-            if (max_val < point[2] & point[2] != 10000) max_val = point[2];
+            if (max_val < point[2] & point[2] != NAN_VALUE) max_val = point[2];
             if (min_val > point[2]) min_val = point[2];
             depth.at<float>(y, x) = point[2];
         }
@@ -90,7 +86,7 @@ void DepthRainbow::convertMonoToRainbow() {
                 col.r = col.g = col.b = 0;
                 float z_val = depth.at<float>(y, x);
                 z_val = ((z_val - min_val) / delta);
-                if (z_val >= 2048)
+                if (z_val >= DEPTH_RANGE)
                 {
                     col.r = col.g = col.b = 0;
                 } else {
@@ -137,7 +133,7 @@ void DepthRainbow::convertMonoToRainbow() {
                 out.at<color>(y, x) = col;
             }
         }
-        LOG(LDEBUG) << "Z coord: Min value = " << min_val << ", Max value = " << max_val;
+        LOG(LINFO) << "Z coord: Min value = " << min_val << ", Max value = " << max_val;
         out_depth_rainbow.write(out);
 	} catch (...)
 	{

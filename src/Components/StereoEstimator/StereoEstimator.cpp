@@ -106,8 +106,33 @@ bool StereoEstimator::onStart() {
 
 void StereoEstimator::CalculateDepthMap() {
     LOG(LINFO) << "Init CalculateDepthMap";
-	cv::Mat oLeftImage(l_in_img.read());
-	cv::Mat oRightImage(r_in_img.read());
+    {
+        if (l_in_img.fresh())
+        {
+            LOG(LINFO) << "Read fresh left image from Data Streams";
+            in_left_image = l_in_img.read();
+        }
+        if (r_in_img.fresh())
+        {
+            LOG(LINFO) << "Read fresh right image from Data Streams";
+            in_right_image = r_in_img.read();
+        }
+        if (l_in_cam_info.fresh())
+        {
+            LOG(LINFO) << "Read fresh left CameraInfo from Data Streams";
+            in_left_cam_info = l_in_cam_info.read();
+        }
+        if (r_in_cam_info.fresh())
+        {
+            LOG(LINFO) << "Read fresh right CameraInfo from Data Streams";
+            in_right_cam_info = r_in_cam_info.read();
+        }
+    }
+
+    cv::Mat& oLeftImage(in_left_image);
+    cv::Mat& oRightImage(in_right_image);
+    Types::CameraInfo& oLeftCamInfo(in_left_cam_info);
+    Types::CameraInfo& oRightCamInfo(in_right_cam_info);
     if( algorythm_type == STEREO_BM ){
     	cv::Mat LgreyMat, RgreyMat;
     	cv::cvtColor(oLeftImage, LgreyMat, CV_BGR2GRAY);
@@ -117,8 +142,7 @@ void StereoEstimator::CalculateDepthMap() {
     }
 	try {
     LOG(LDEBUG) << "Get images from Data Streams";
-	Types::CameraInfo oLeftCamInfo(l_in_cam_info.read());
-	Types::CameraInfo oRightCamInfo(r_in_cam_info.read());
+
 
     LOG(LDEBUG) << "Create bunch of fresh cv::Mat objects";
     cv::Rect roi1, roi2;
@@ -221,8 +245,9 @@ void StereoEstimator::CalculateDepthMap() {
 
     LOG(LDEBUG) << "Writing to data stream";
 
-    out_depth_map.write(disp8);
-    out_rgb_stereo.write(oLeftRectified);
+    out_depth_map.write(disp8(roi1));
+    out_rgb_stereo.write(oLeftRectified(roi1));
+    cv::Mat xyz_roi(xyz, roi1);
     out_depth_xyz.write(xyz);
 	} catch (...)
 	{
