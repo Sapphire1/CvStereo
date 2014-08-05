@@ -244,16 +244,19 @@ void StereoEstimator::CalculateDepthMap() {
     reprojectImageTo3D(disp8, xyz, Q, true);
 
     LOG(LDEBUG) << "Writing to data stream";
-
-    out_depth_map.write(disp8(roi1));
-    out_rgb_stereo.write(oLeftRectified(roi1));
-    if( algorythm_type == STEREO_SGBM )
+    cv::Rect roi2_copy(roi2);
+    roi2_copy.x += minDisparity;
+    cv::Rect mergedRoi = roi1 & roi2_copy;
+    out_depth_map.write(disp8(mergedRoi));
+    out_rgb_stereo.write(oLeftRectified(mergedRoi));
+    /*if( algorythm_type == STEREO_SGBM || algorythm_type == STEREO_HH )
     {
-       out_depth_xyz.write(xyz(roi1));
+       out_depth_xyz.write(xyz(mergedRoi));
     } else
     {
         out_depth_xyz.write(xyz);
-    }
+    }*/
+    out_depth_xyz.write(xyz(mergedRoi));
     } catch (...)
 	{
 		LOG(LERROR) << "Error occured in processing input";
