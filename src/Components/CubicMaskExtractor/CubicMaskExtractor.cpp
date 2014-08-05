@@ -106,7 +106,7 @@ void CubicMaskExtractor::filter() {
   cv::Mat tmp_img;
   tmp_img.create(depth_size, CV_8UC1);
  
-	std::cout << "Limity\n"<<"xL "<< xL<<"\txH "<< xH<< "\tyL " <<yL<<"\tyH "<< yH <<"\tzL "<< zL <<"\tzH" <<zH<<"\n";
+	std::cout << "Limity\n"<<"xL "<< xL<<"\txH "<< xH<< "\tyL " <<yL<<"\tyH "<< yH <<"\tzL "<< zL <<"\tzH " <<zH<<"\n";
 	
 	// iteracja po obrazie glebi, podstawienie pod maske odpowiednich pikseli
         if (depth_image.isContinuous() && tmp_img.isContinuous()) {
@@ -126,8 +126,11 @@ void CubicMaskExtractor::filter() {
 		 float x = depth_ptr[j];
                 float y = depth_ptr[j + 1];
                 float z= depth_ptr[j + 2];;
-
-		if(x>xL && x<xH && y>yL && y<yH &&z>zL && z<zH)
+		if(z==10000)
+		{
+		  val=0;
+		}    
+		else if(x>xL && x<xH && y>yL && y<yH &&z>zL && z<zH)
 		{
 		    val = 255;
 		}

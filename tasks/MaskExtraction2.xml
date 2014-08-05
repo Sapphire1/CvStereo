@@ -85,6 +85,10 @@
 					<param name="count">1</param>
 					<param name="title">XYZ</param>
 				</Component>
+				<Component name="WindowMask" type="CvBasic:CvWindow" priority="3" bump="0">
+					<param name="count">1</param>
+					<param name="title">Mask</param>
+				</Component>
 			</Executor>
 		</Subtask>	
 	</Subtasks>
@@ -128,14 +132,20 @@
 			<sink>DepthTransform.in_tvec</sink>
 		</Source>
 		<Source name="DepthTransform.out_image_xyz">
-			<!--sink>CubicMaskExtractor.in_image_xyz</sink-->
+			<sink>CubicMaskExtractor.in_image_xyz</sink>
 			<sink>WindowTransformedRainbow.in_depth_mono</sink>
+		</Source>
+		<Source name="CenterMassGenerator.out_centerMassPoint">
+			<sink>CubicMaskExtractor.in_centerMassPoint</sink>
 		</Source>
 		<Source name="WindowXYZRainbow.out_depth_rainbow">
 			<sink>WindowXYZ.in_img</sink>
 		</Source>
 		<Source name="WindowTransformedRainbow.out_depth_rainbow">
 			<sink>WindowTransformed.in_img</sink>
+		</Source>
+		<Source name="CubicMaskExtractor.out_mask">
+		    <sink>WindowMask.in_img</sink>
 		</Source>
 	</DataStreams>
 </Task>
