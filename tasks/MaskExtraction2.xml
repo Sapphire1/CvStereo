@@ -33,9 +33,12 @@
 				</Component>
 				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
 					<param name="data_file">/home/dkaczmar/stereo/info/left.yml</param>
+					<param name="reload_file_opt">1</param>
+
 				</Component>
 				<Component name="CameraInfoRight" type="CvCoreTypes:CameraInfoProvider" priority="5" bump="0">
 					<param name="data_file">/home/dkaczmar/stereo/info/right.yml</param>
+					<param name="reload_file_opt">1</param>
 				</Component>
 				<Component name="StereoEstimator" type="CvStereo:StereoEstimator" priority="6" bump="0">
 					<param name="minDisparity">50</param>
@@ -110,10 +113,14 @@
 			<sink>StereoEstimator.r_in_img</sink>
 		</Source>
 		<Source name="CameraInfoLeft.out_camera_info">
+			<param name="reload_file_opt">"true"</param>
 			<sink>StereoEstimator.l_cam_info</sink>
+			<param name="reload_file_opt">1</param>
 		</Source>
 		<Source name="CameraInfoRight.out_camera_info">
+			<param name="reload_file_opt">"true"</param>
 			<sink>StereoEstimator.r_cam_info</sink>
+			<param name="reload_file_opt">1</param>
 		</Source>
 		<Source name="StereoEstimator.out_rgb_stereo">
 			<sink>WindowRGB.in_img</sink>

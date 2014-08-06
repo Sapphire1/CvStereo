@@ -62,7 +62,8 @@ bool CenterMassGenerator::onStart() {
 
 void CenterMassGenerator::CenterMassGeneration() {
 	try{
-	  cv::Point3d point = cv::Point3d(1.1,1.1,1.1);
+//	  cv::Point3d point = cv::Point3d(1.1,1.1,1.1);
+	  cv::Point3d point = cv::Point3d(0.0,0.0,0.0);
 	  LOG(LINFO) << "Writing mask to data stream";
 	  out_centerMassPoint.write(point);
 	 

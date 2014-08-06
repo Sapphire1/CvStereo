@@ -1,0 +1,232 @@
+<Task>
+	<!-- reference task information -->
+	<Reference>
+		<Author>
+			<name>Łukasz Żmuda</name>
+			<link></link>
+		</Author>
+		
+		<Description>
+			<brief>ecovi:t1/SequenceViewer</brief>
+			<full>Loads and displays a sequence of images</full>	
+		</Description>
+	</Reference>
+	
+	<!-- task definition -->
+	<Subtasks>
+		<Subtask name="Main">
+			<Executor name="Processing"  period="0.2">
+				<Component name="SequenceLeft" type="CvBasic:Sequence" priority="2" bump="0">
+					<param name="sequence.directory">/home/dkaczmar/stereo/inka_stereo/left/</param>
+					<param name="sequence.pattern">left*.*</param>
+					<param name="mode.loop">1</param>
+					<param name="mode.triggered">1</param>						
+				</Component>
+				<Component name="SequenceRight" type="CvBasic:Sequence" priority="3" bump="0">
+					<param name="sequence.directory">/home/dkaczmar/stereo/inka_stereo/right/</param>
+					<param name="sequence.pattern">right*.*</param>
+					<param name="mode.loop">1</param>
+					<param name="mode.triggered">1</param>					
+				</Component>
+				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
+					<param name="data_file">/home/dkaczmar/stereo/info/left.yml</param>
+					<param name="reload_file_opt">1</param>
+
+				</Component>
+				<Component name="CameraInfoRight" type="CvCoreTypes:CameraInfoProvider" priority="5" bump="0">
+					<param name="data_file">/home/dkaczmar/stereo/info/right.yml</param>
+					<param name="reload_file_opt">1</param>
+				</Component>
+				<Component name="StereoEstimator" type="CvStereo:StereoEstimator" priority="6" bump="0">
+					<param name="minDisparity">50</param>
+					<param name="numberOfDisparities">320</param>
+					<param name="uniquenessRatio">20</param>
+					<param name="preFilterCap">25</param>
+					<param name="speckleWindowSize">30</param>
+				</Component>
+				  <Component name="CenterMassGenerator" type="CvStereo:CenterMassGenerator" priority="1" bump="0">
+				</Component>
+				 <Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="1" bump="0">
+					<param name="ransacFilter.XAxisMax_treshold">-0.205</param>
+					<param name="ransacFilter.XAxisMin_treshold">0.35</param>
+					<param name="ransacFilter.YAxisMax_treshold">0.40</param>
+					<param name="ransacFilter.YAxisMin_treshold">0.43</param>
+					<param name="ransacFilter.ZAxisMax_treshold">0.8</param>
+					<param name="ransacFilter.ZAxisMin_treshold">-0.60</param>
+				</Component>
+				<Component name="TransformParameterGenerator" type="CvStereo:TransformParameterGenerator" priority="1" bump="0">
+				</Component>
+				<Component name="DepthTransform" type="CvStereo:DepthTransform" priority="1" bump="0">
+				</Component>
+				<Component name="WindowTransformedRainbow" type="CvStereo:DepthRainbow" priority="4" bump="0">
+					<param name="count">1</param>
+					<param name="title">Transformed</param>
+				</Component>
+				<Component name="WindowXYZRainbow" type="CvStereo:DepthRainbow" priority="5" bump="0">
+					<param name="count">1</param>
+					<param name="title">XYZ</param>
+				</Component>
+				<Component name="Sequence" type="DCL_CvBasic:Sequence" priority="1" bump="0">
+					<param name="sequence.directory">/home/discode/08_2014/inka_stereo/left/</param>
+					<param name="sequence.pattern">.*\_rgb.png</param>
+					<param name="mode.loop">1</param>
+				</Component>
+				<Component name="CameraInfo" type="CvCoreTypes:CameraInfoProvider" priority="2" bump="1">
+					<param name="camera_matrix">525 0 319.5; 0 525 239.5; 0 0 1</param>
+					<param name="dist_coeffs">0.18126525 -0.39866885 0.00000000 0.00000000 0.00000000</param>
+					<param name="reload_file_opt">0</param>
+				</Component>
+				<Component name="DetectCircles" type="DCL_CvBasic:CvFindCirclesGrid" priority="3">
+					<param name="chessboard.board_width">3</param>
+					<param name="chessboard.board_height">5</param>
+					<param name="chessboard.square_size">0.06</param>
+				</Component>
+				<Component name="DetectCirclesInv" type="DCL_CvBasic:CvFindCirclesGrid" priority="4">
+					<param name="chessboard.board_width">3</param>
+					<param name="chessboard.board_height">5</param>
+					<param name="chessboard.square_size">0.06</param>
+					<param name="image.inverse">1</param>
+				</Component>
+				<Component name="SolvePNP" type="DCL_CvBasic:CvSolvePnP" priority="5">
+					<param name="offset.X">-0.075</param>
+					<param name="offset.Y">0.113</param>
+				</Component>
+				<Component name="SolvePNPinv" type="DCL_CvBasic:CvSolvePnP" priority="6">
+					<param name="offset.X">-0.075</param>
+					<param name="offset.Y">-0.233</param>
+				</Component>
+				<Component name="Draw" type="SIFTObjectModel:DrawCSystem" priority="7">
+				</Component>
+				<Component name="Drawinv" type="SIFTObjectModel:DrawCSystem" priority="8">
+				</Component>
+				<Component name="Statistic" type="DCL_CvBasic:CalcStatistics" priority="9">
+				</Component>
+			</Executor>
+			<Executor name="DisplayExec" period="1">
+				<Component name="Window" type="DCL_CvBasic:CvWindow" priority="1" bump="0">
+					<param name="count">2</param>
+					<param name="title">Window,WindowInverse</param>
+				</Component>
+				<Component name="WindowRGB" type="DCL_CvBasic:CvWindow" priority="2" bump="0">
+					<param name="count">1</param>
+					<param name="title">RGB View</param>
+				</Component>
+				<Component name="WindowDepthMono" type="DCL_CvBasic:CvWindow" priority="3" bump="0">
+					<param name="count">1</param>
+					<param name="title">Mono Depth View</param>
+				</Component>
+				<Component name="WindowTransformed" type="DCL_CvBasic:CvWindow" priority="4" bump="0">
+					<param name="count">1</param>
+					<param name="title">Transformed</param>
+				</Component>
+				<Component name="WindowXYZ" type="DCL_CvBasic:CvWindow" priority="5" bump="0">
+					<param name="count">1</param>
+					<param name="title">XYZ</param>
+				</Component>
+				<Component name="WindowMask" type="DCL_CvBasic:CvWindow" priority="6" bump="0">
+					<param name="count">1</param>
+					<param name="title">Mask</param>
+				</Component>
+			</Executor>
+		</Subtask>	
+	
+	</Subtasks>
+	
+	<!-- pipes connecting datastreams -->
+	<DataStreams>
+		<Source name="SequenceLeft.out_img">
+			<sink>StereoEstimator.l_in_img</sink>
+			<sink>DetectCircles.in_img</sink>
+			<sink>DetectCirclesInv.in_img</sink>
+			<sink>Window.in_img0</sink>	
+			<sink>Window.in_img1</sink>
+		</Source>
+		<Source name="SequenceRight.out_img">
+			<sink>StereoEstimator.r_in_img</sink>
+		</Source>
+		<Source name="CameraInfoLeft.out_camera_info">
+			<param name="reload_file_opt">"true"</param>
+			<sink>StereoEstimator.l_cam_info</sink>
+			<param name="reload_file_opt">1</param>
+		</Source>
+		<Source name="CameraInfoRight.out_camera_info">
+			<param name="reload_file_opt">"true"</param>
+			<sink>StereoEstimator.r_cam_info</sink>
+			<param name="reload_file_opt">1</param>
+		</Source>
+		<Source name="StereoEstimator.out_rgb_stereo">
+			<sink>WindowRGB.in_img</sink>
+		</Source>
+		<Source name="StereoEstimator.out_depth_xyz">
+			<sink>WindowDepthMono.in_img</sink>
+			<sink>WindowXYZRainbow.in_depth_mono</sink>
+			<sink>DepthTransform.in_image_xyz</sink>
+			<sink>CenterMassGenerator.in_image_xyz</sink>
+			<sink>TransformParameterGenerator.in_image_xyz</sink>
+		</Source>
+		
+		
+		<Source name="CenterMassGenerator.out_centerMassPoint">
+			<sink>CubicMaskExtractor.in_centerMassPoint</sink>
+		</Source>
+		<Source name="WindowXYZRainbow.out_depth_rainbow">
+			<sink>WindowXYZ.in_img</sink>
+		</Source>
+		<Source name="WindowTransformedRainbow.out_depth_rainbow">
+			<sink>WindowTransformed.in_img</sink>
+		</Source>
+		<Source name="CubicMaskExtractor.out_mask">
+		    <sink>WindowMask.in_img</sink>
+		</Source>
+		<Source name="DetectCircles.out_chessboard">
+			<sink>SolvePNPinv.in_object3d</sink>	
+			<sink>Window.in_draw1</sink>
+		</Source>
+		<Source name="DetectCirclesInv.out_chessboard">
+			<sink>Window.in_draw0</sink>
+			<sink>SolvePNP.in_object3d</sink>		
+		</Source>
+		<Source name="CameraInfo.out_camera_info">
+			<sink>SolvePNP.in_camerainfo</sink>
+			<sink>Draw.in_camera_matrix</sink>
+			<sink>SolvePNPinv.in_camerainfo</sink>
+			<sink>Drawinv.in_camera_matrix</sink>
+		</Source>
+		<Source name="SolvePNP.out_rvec">
+			<sink>Draw.in_rvec</sink>
+		</Source>
+		<Source name="SolvePNP.out_tvec">
+			<sink>Draw.in_tvec</sink>
+		</Source>
+		<Source name="Draw.out_csystem">
+			<sink>Window.in_draw0</sink>		
+		</Source>
+		<Source name="SolvePNPinv.out_rvec">
+			<sink>Statistic.in_rvec</sink>
+			<sink>Drawinv.in_rvec</sink>
+		</Source>
+		<Source name="SolvePNPinv.out_tvec">
+			<sink>Statistic.in_tvec</sink>
+			<sink>Drawinv.in_tvec</sink>
+		</Source>
+		<Source name="Drawinv.out_csystem">
+			<sink>Window.in_draw1</sink>		
+		</Source>
+		<!--Source name="SolvePNP.out_rvec">
+			<sink>DepthTransform.in_rvec</sink>
+		</Source>
+		<Source name="SolvePNP.out_tvec">
+			<sink>DepthTransform.in_tvec</sink>
+		</Source-->
+		<Source name="SolvePNPinv.out_rvec">
+			<sink>DepthTransform.in_rvec</sink>
+		</Source>
+		<Source name="SolvePNPinv.out_tvec">
+			<sink>DepthTransform.in_tvec</sink>
+		</Source>
+		<Source name="DepthTransform.out_image_xyz">
+			<sink>CubicMaskExtractor.in_image_xyz</sink>
+			<sink>WindowTransformedRainbow.in_depth_mono</sink>
+		</Source>
+	</DataStreams>
+</Task>

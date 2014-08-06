@@ -71,10 +71,16 @@ void DepthTransform::DepthTransformation() {
 	  cv::Mat depth_image = in_image_xyz.read();
 	  cv::Mat tvec = in_tvec.read();
 	  cv::Mat rvec = in_rvec.read();
+	  //	  cv::Mat rotationMatrix = in_rvec.read();
 	  cv::Mat transformed_image;
 	  cv::Size depth_size = depth_image.size();
 	  std::cout<<"tvec : "<<tvec<<"\n";
 	  std::cout<<"rvec : "<<rvec<<"\n";
+	  
+	  cv::Mat_<double> rotationMatrix;
+	  cv::Rodrigues(rvec, rotationMatrix);
+	  std::cout<<"rvec : "<<rotationMatrix<<"\n";
+
 	  cv::Mat tmp_img;// = cv::Mat(depth_image);
 	  tmp_img.create(depth_size, CV_32FC3);
 	  //////////////////////////////////////////////////////////////////////////
@@ -148,10 +154,10 @@ void DepthTransform::DepthTransformation() {
 		z=z-tvec.at<double>(2,0);
 		//std::cout<<"Jest: "<<x<<" "<<y<<" "<<z<<"\n";
 
-		rvec=rvec.t();
-      		newX = x*rvec.at<double>(0,0) + y*rvec.at<double>(0,1)+z*rvec.at<double>(0,2);
-		newY = x*rvec.at<double>(1,0) + y*rvec.at<double>(1,1)+z*rvec.at<double>(1,2);
-		newZ = x*rvec.at<double>(2,0) + y*rvec.at<double>(2,1)+z*rvec.at<double>(2,2);
+		rotationMatrix=rotationMatrix.t();
+      		newX = x*rotationMatrix.at<double>(0,0) + y*rotationMatrix.at<double>(0,1)+z*rotationMatrix.at<double>(0,2);
+		newY = x*rotationMatrix.at<double>(1,0) + y*rotationMatrix.at<double>(1,1)+z*rotationMatrix.at<double>(1,2);
+		newZ = x*rotationMatrix.at<double>(2,0) + y*rotationMatrix.at<double>(2,1)+z*rotationMatrix.at<double>(2,2);
 		//std::cout<<"Jest po rotacji: "<<newX<<" "<<newY<<" "<<newZ<<"\n";
 
 		depth_ptr_tmp[j]=newX;
