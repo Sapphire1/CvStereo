@@ -46,13 +46,21 @@
 				</Component>
 				  <Component name="CenterMassGenerator" type="CvStereo:CenterMassGenerator" priority="1" bump="0">
 				</Component>
-				 <Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="1" bump="0">
+				 <!--Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="1" bump="0">
 					<param name="ransacFilter.XAxisMax_treshold">-0.205</param>
 					<param name="ransacFilter.XAxisMin_treshold">0.35</param>
 					<param name="ransacFilter.YAxisMax_treshold">0.40</param>
 					<param name="ransacFilter.YAxisMin_treshold">0.43</param>
 					<param name="ransacFilter.ZAxisMax_treshold">0.8</param>
 					<param name="ransacFilter.ZAxisMin_treshold">-0.60</param>
+				</Component-->
+				 <Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="1" bump="0">
+					<param name="ransacFilter.XAxisMax_treshold">0.08</param>
+					<param name="ransacFilter.XAxisMin_treshold">0.1</param>
+					<param name="ransacFilter.YAxisMax_treshold">0.2</param>
+					<param name="ransacFilter.YAxisMin_treshold">0.1</param>
+					<param name="ransacFilter.ZAxisMax_treshold">0.08</param>
+					<param name="ransacFilter.ZAxisMin_treshold">0.1</param>
 				</Component>
 				<Component name="TransformParameterGenerator" type="CvStereo:TransformParameterGenerator" priority="1" bump="0">
 				</Component>
@@ -71,9 +79,14 @@
 					<param name="sequence.pattern">.*\_rgb.png</param>
 					<param name="mode.loop">1</param>
 				</Component>
-				<Component name="CameraInfo" type="CvCoreTypes:CameraInfoProvider" priority="2" bump="1">
+				<!--Component name="CameraInfo" type="CvCoreTypes:CameraInfoProvider" priority="2" bump="1">
 					<param name="camera_matrix">525 0 319.5; 0 525 239.5; 0 0 1</param>
 					<param name="dist_coeffs">0.18126525 -0.39866885 0.00000000 0.00000000 0.00000000</param>
+					<param name="reload_file_opt">0</param>
+				</Component-->
+				<Component name="CameraInfo" type="CvCoreTypes:CameraInfoProvider" priority="2" bump="1">
+					<param name="camera_matrix">1540.0447781112405 0.0 619.5322437565924; 0, 1532.103992838323 521.8407045845933; 0 0 1</param>
+					<param name="dist_coeffs">-0.23148743003437558 0.1839897092935131 0.003169284509443375 0.00048336015954902504 0</param>
 					<param name="reload_file_opt">0</param>
 				</Component>
 				<Component name="DetectCircles" type="DCL_CvBasic:CvFindCirclesGrid" priority="3">
