@@ -24,11 +24,12 @@ Call __make dataset__ from the build directory in order to download and unrar th
 Tasks
 ------------
 Velma acquisition:
-   * VelmaStereoCameraViewer - Displays left and right image acquired from the stereo pair mounted on Velma head
-   * VelmaStereoCameraCloudViewer - Acquires stereo images from Velma head and transforms them into coloured point clouds 
+   * __VelmaStereoCameraViewer__ - Displays left and right images acquired from the stereo pair mounted on Velma head.
+   * __VelmaStereoCameraCloudViewer__ - Acquires stereo images from Velma head and transforms them into coloured point clouds.
+    
 Stereo sequences from files:   
-   * StereoLRSequenceViewer - Displays a sequence of left and right images acquired from a stereo pair
-   * StereoLRSequenceCloudViewer - Generates and displays point cloud generated from stereo-images (LR). Enables to write the RGB-D (a pair of RGB and XYZ images) to file.
+   * __StereoLRSequenceViewer__ - Displays a sequence of left and right images acquired from a stereo pair.
+   * __StereoLRSequenceCloudViewer__ - Generates and displays point cloud generated from stereo-images (LR). Enables to write the RGB-D (a pair of RGB and XYZ images) to file.
 
 Developers
 ----------

@@ -9,7 +9,7 @@
 	
 		<Description>
 			<brief>Displays images from Velma stereo pair</brief>
-			<full>Displays left and right image acquired from the stereo pair mounted on Velma head</full>
+			<full>Displays left and right images acquired from the stereo pair mounted on Velma head</full>
 		</Description>
 	</Reference>
 
