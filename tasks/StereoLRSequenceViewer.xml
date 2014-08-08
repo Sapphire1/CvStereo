@@ -49,17 +49,9 @@
 
 			</Executor>
 			<Executor name="DisplayExec" period="1">
-				<Component name="WindowRGB" type="CvBasic:CvWindow" priority="1" bump="0">
-					<param name="count">1</param>
-					<param name="title">RGB View</param>
-				</Component>
-				<Component name="WindowDepthMono" type="CvBasic:CvWindow" priority="2" bump="0">
-					<param name="count">1</param>
-					<param name="title">Mono Depth View</param>
-				</Component>
-				<Component name="WindowDepth" type="CvBasic:CvWindow" priority="3" bump="0">
-					<param name="count">1</param>
-					<param name="title">Rainbow Depth View</param>
+				<Component name="Window" type="CvBasic:CvWindow" priority="1" bump="0">
+					<param name="count">3</param>
+					<param name="title">RGB View, Mono Depth, Rainbow Depth</param>
 				</Component>
 			</Executor>
 		</Subtask>	
@@ -68,8 +60,8 @@
 	<!-- pipes connecting datastreams -->
 	<DataStreams>
 		<Source name="NextImageTrigger.out_trigger">
-			<sink>SequenceLeft.in_load_next_image_trigger</sink>
-			<sink>SequenceRight.in_load_next_image_trigger</sink>
+			<sink>SequenceLeft.in_trigger</sink>
+			<sink>SequenceRight.in_trigger</sink>
 		</Source>
 		<Source name="SequenceLeft.out_img">
 			<sink>StereoEstimator.l_in_img</sink>
@@ -84,14 +76,14 @@
 			<sink>StereoEstimator.r_cam_info</sink>
 		</Source>
 		<Source name="StereoEstimator.out_rgb_stereo">
-			<sink>WindowRGB.in_img</sink>
+			<sink>Window.in_img0</sink>
 		</Source>
 		<Source name="StereoEstimator.out_depth_xyz">
 			<sink>DepthRainbow.in_depth_mono</sink>
-			<sink>WindowDepthMono.in_img</sink>
+			<sink>Window.in_img1</sink>
 		</Source>
 		<Source name="DepthRainbow.out_depth_rainbow">
-			<sink>WindowDepth.in_img</sink>
+			<sink>Window.in_img2</sink>
 		</Source>
 	</DataStreams>
 </Task>

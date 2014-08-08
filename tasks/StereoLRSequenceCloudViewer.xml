@@ -8,8 +8,8 @@
 		</Author>
 	
 		<Description>
-			<brief>Disparity viewer</brief>
-			<full>Generate and displays depth map generated from stereo-images</full>
+			<brief>Displays point cloud generated from stereo</brief>
+			<full>Generate and displays point cloud generated from stereo-images (LR). Enables to write the RGB-D (a pair of RGB and XYZ images) to file.</full>
 		</Description>
 	</Reference>
 
@@ -23,13 +23,13 @@
 					<param name="sequence.directory">%[TASK_LOCATION]%/../data/bible_lr/</param>
 					<param name="sequence.pattern">left_.*\.png</param>
 					<param name="mode.loop">1</param>
-					<param name="mode.triggered">1</param>						
+					<param name="mode.auto_trigger">1</param>						
 				</Component>
 				<Component name="SequenceRight" type="CvBasic:Sequence" priority="3" bump="0">
 					<param name="sequence.directory">%[TASK_LOCATION]%/../data/bible_lr/</param>
 					<param name="sequence.pattern">right_.*\.png</param>
 					<param name="mode.loop">1</param>
-					<param name="mode.triggered">1</param>					
+					<param name="mode.auto_trigger">1</param>					
 				</Component>
 				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
 					<param name="data_file">%[TASK_LOCATION]%/../data/velma-stereo/left.yml</param>
@@ -53,7 +53,7 @@
 			</Executor>
 			<Executor name="WriterExec" period="1">
 				<Component name="StereoWriter" type="CvStereo:StereoWriter" priority="1" bump="0">
-					<param name="save.directory">/home/dkaczmar/stereo/output/</param>
+					<param name="save.directory">%[TASK_LOCATION]%/../data</param>
 					<param name="save.filename">stereo_img</param>
 				</Component>
 			</Executor>
@@ -63,8 +63,8 @@
 	<!-- pipes connecting datastreams -->
 	<DataStreams>
 		<Source name="NextImageTrigger.out_trigger">
-			<sink>SequenceLeft.in_load_next_image_trigger</sink>
-			<sink>SequenceRight.in_load_next_image_trigger</sink>
+			<sink>SequenceLeft.in_trigger</sink>
+			<sink>SequenceRight.in_trigger</sink>
 		</Source>
 		<Source name="SequenceLeft.out_img">
 			<sink>StereoEstimator.l_in_img</sink>
