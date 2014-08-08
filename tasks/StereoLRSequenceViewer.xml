@@ -8,8 +8,8 @@
 		</Author>
 	
 		<Description>
-			<brief>Displays RGB and depth images generated from stereo sequence</brief>
-			<full>Generate and displays depth map generated from stereo-images</full>
+			<brief>Displays stereo sequence (LR)</brief>
+			<full>Displays a sequence of left and right images acquired from a stereo pair</full>
 		</Description>
 	</Reference>
 

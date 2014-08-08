@@ -21,6 +21,14 @@ Call __make dataset__ from the build directory in order to download and unrar th
    * bible_lr - contains images acquited from left and right camera of the Velma's active head
    * bible_rgbxyz - dataset containing RGB-D images (pairs of RGB and XYZ files)    
 
+Tasks
+------------
+Velma acquisition:
+   * VelmaStereoCameraViewer - Displays left and right image acquired from the stereo pair mounted on Velma head
+   * VelmaStereoCameraCloudViewer - Acquires stereo images from Velma head and transforms them into coloured point clouds 
+Stereo sequences from files:   
+   * StereoLRSequenceViewer - Displays a sequence of left and right images acquired from a stereo pair
+   * StereoLRSequenceCloudViewer - Generates and displays point cloud generated from stereo-images (LR). Enables to write the RGB-D (a pair of RGB and XYZ images) to file.
 
 Developers
 ----------

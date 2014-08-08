@@ -9,7 +9,7 @@
 	
 		<Description>
 			<brief>Displays point cloud generated from stereo</brief>
-			<full>Generate and displays point cloud generated from stereo-images (LR). Enables to write the RGB-D (a pair of RGB and XYZ images) to file.</full>
+			<full>Generates and displays point cloud generated from stereo-images (LR). Enables to write the RGB-D (a pair of RGB and XYZ images) to file.</full>
 		</Description>
 	</Reference>
 
