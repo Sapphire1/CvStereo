@@ -249,13 +249,6 @@ void StereoEstimator::CalculateDepthMap() {
     cv::Rect mergedRoi = roi1 & roi2_copy;
     out_depth_map.write(disp8(mergedRoi));
     out_rgb_stereo.write(oLeftRectified(mergedRoi));
-    /*if( algorythm_type == STEREO_SGBM || algorythm_type == STEREO_HH )
-    {
-       out_depth_xyz.write(xyz(mergedRoi));
-    } else
-    {
-        out_depth_xyz.write(xyz);
-    }*/
     out_depth_xyz.write(xyz(mergedRoi));
     } catch (...)
 	{
