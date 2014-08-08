@@ -33,10 +33,14 @@
 				<Component name="CameraInfoRight" type="CvCoreTypes:CameraInfoProvider" priority="5" bump="0">
 					<param name="data_file">/home/dkaczmar/stereo/info/right.yml</param>
 				</Component>
-				<Component name="DepthCalculator" type="CvStereo:DepthProcessor" priority="6" bump="0">
-					<param name="minDisparity">160</param>
+				<Component name="StereoEstimator" type="CvStereo:StereoEstimator" priority="6" bump="0">
+					<param name="minDisparity">50</param>
 					<param name="numberOfDisparities">320</param>
-					<param name="uniquenessRatio">25</param>
+					<param name="uniquenessRatio">20</param>
+					<param name="preFilterCap">25</param>
+					<param name="speckleWindowSize">30</param>
+				</Component>
+				<Component name="DepthConventer" type="CvStereo:DepthConventer" priority="7" bump="0">
 				</Component>
 				<Component name="PCDWriter" type="PCL:PCDWriter" priority="9" bump="0">
 					<param name="filename">/home/dkaczmar/stereo/cloud/output.pcd</param>
@@ -45,15 +49,7 @@
 			<Executor name="DisplayExec" period="0.5">
 				<Component name="WindowLeft" type="CvBasic:CvWindow" priority="7" bump="0">
 					<param name="count">1</param>
-					<param name="title">LeftImage</param>
-				</Component>
-				<Component name="WindowRight" type="CvBasic:CvWindow" priority="8" bump="0">
-					<param name="count">1</param>
-					<param name="title">RightImage</param>
-				</Component>
-				<Component name="WindowDepthMap" type="CvBasic:CvWindow" priority="9" bump="0">
-					<param name="count">1</param>
-					<param name="title">DepthImage</param>
+					<param name="title">RGB Image</param>
 				</Component>
 				<Component name="WindowDepth" type="PCL:CloudViewer" priority="10" bump="0">
 					<param name="count">1</param>
@@ -66,27 +62,24 @@
 	<!-- pipes connecting datastreams -->
 	<DataStreams>
 		<Source name="SourceLeft.out_img">
-			<sink>DepthCalculator.l_in_img</sink>
+			<sink>StereoEstimator.l_in_img</sink>
 		</Source>
 		<Source name="SourceRight.out_img">
-			<sink>DepthCalculator.r_in_img</sink>
+			<sink>StereoEstimator.r_in_img</sink>
 		</Source>
 		<Source name="CameraInfoLeft.out_camera_info">
-			<sink>DepthCalculator.l_cam_info</sink>
+			<sink>StereoEstimator.l_cam_info</sink>
 		</Source>
 		<Source name="CameraInfoRight.out_camera_info">
-			<sink>DepthCalculator.r_cam_info</sink>
+			<sink>StereoEstimator.r_cam_info</sink>
 		</Source>
-		<Source name="DepthCalculator.out_left">
-			<sink>WindowLeft.in_img</sink>
+		<Source name="StereoEstimator.out_rgb_stereo">
+			<sink>DepthConventer.in_rgb_stereo</sink>
 		</Source>
-		<Source name="DepthCalculator.out_right">
-			<sink>WindowRight.in_img</sink>
+		<Source name="StereoEstimator.out_depth_xyz">
+			<sink>DepthConventer.in_depth_xyz</sink>
 		</Source>
-		<Source name="DepthCalculator.out_depth_map">
-			<sink>WindowDepthMap.in_img</sink>
-		</Source>
-		<Source name="DepthCalculator.out_cloud_xyzrgb">
+		<Source name="DepthConventer.out_cloud_xyzrgb">
 			<sink>WindowDepth.in_cloud_xyzrgb</sink>
 			<sink>PCDWriter.in_cloud_xyzrgb</sink>
 		</Source>

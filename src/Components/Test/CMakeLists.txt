@@ -9,10 +9,10 @@ FIND_PACKAGE( OpenCV REQUIRED )
 
 
 # Create an executable file from sources:
-ADD_LIBRARY(DepthProcessor SHARED ${files})
+ADD_LIBRARY(Test SHARED ${files})
 
 # Link external libraries
-TARGET_LINK_LIBRARIES(DepthProcessor ${DisCODe_LIBRARIES} 
+TARGET_LINK_LIBRARIES(Test ${DisCODe_LIBRARIES} 
 	${OpenCV_LIBS})
 
-INSTALL_COMPONENT(DepthProcessor)
+INSTALL_COMPONENT(Test)

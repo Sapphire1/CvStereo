@@ -111,7 +111,12 @@ protected:
 
 	cv::StereoSGBM* sgbm;
 	cv::StereoBM* bm;
-	
+
+    cv::Mat in_left_image;
+    cv::Mat in_right_image;
+    Types::CameraInfo in_left_cam_info;
+    Types::CameraInfo in_right_cam_info;
+
 	// Handlers
 	void CalculateDepthMap();
 };
