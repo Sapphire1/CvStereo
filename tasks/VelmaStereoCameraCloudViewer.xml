@@ -63,10 +63,6 @@
 		</Subtask>	
 	</Subtasks>
 	
-	<!-- connections between events and handelrs -->
-	<Events>
-	</Events>
-	
 	<!-- pipes connecting datastreams -->
 	<DataStreams>
 		<Source name="SourceLeft.out_img">
