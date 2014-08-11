@@ -71,16 +71,13 @@ void DepthTransform::DepthTransformation() {
 	  
 	  cv::Size depth_size = depth_image.size();
 
-	  cv::Mat_<double>(3,1) tvec;
-	  cv::Mat_<double>(3,3) rotationMatrix;
+	  cv::Mat_<double> rotationMatrix(3,3);
+	  cv::Mat_<double> tvec(3,1);	  
 	  
 	  cv::Mat tmp_img;// = cv::Mat(depth_image);
-	  
 	  tmp_img.create(depth_size, CV_64FC1);
-	  //////////////////////////////////////////////////////////////////////////
 	  
-	// iteracja po obrazie glebi, podstawienie pod maske odpowiednich pikseli
-        if (depth_image.isContinuous() && tmp_img.isContinuous()) {
+	          if (depth_image.isContinuous() && tmp_img.isContinuous()) {
          depth_size.width *= depth_size.height;
          depth_size.height = 1;
         }
