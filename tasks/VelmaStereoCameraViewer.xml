@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Task>
+	<!-- reference task information -->
+	<Reference>
+		<Author>
+			<name>Tomasz Kornuta</name>
+			<link></link>
+		</Author>
+	
+		<Description>
+			<brief>Displays images from Velma stereo pair</brief>
+			<full>Displays left and right images acquired from the stereo pair mounted on Velma head</full>
+		</Description>
+	</Reference>
+
+	<!-- task definition -->
+	<Subtasks>
+		<Subtask name="Processing">
+			<Executor name="ExecDisp" period="1">
+				<Component name="SourceLeft" type="CameraPGR:CameraPGR" priority="1" bump="-1">
+					<!--<param name="device">1</param>-->
+					<param name="camera_serial">13201068</param>
+					<param name="pixel_format">RGB</param>
+				</Component>
+				<Component name="SourceRight" type="CameraPGR:CameraPGR" priority="2" bump="-1">
+					<!--<param name="device">1</param>-->
+					<param name="camera_serial">13201080</param>
+					<param name="pixel_format">RGB</param>
+				</Component>
+				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="3" bump="0">
+					<param name="data_file">%[TASK_LOCATION]%/../data/velma-stereo/left.yml</param>
+				</Component>
+				<Component name="CameraInfoRight" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
+					<param name="data_file">%[TASK_LOCATION]%/../data/velma-stereo/right.yml</param>
+				</Component>
+			</Executor>
+			<Executor name="DisplayExec" period="0.5">
+				<Component name="Window" type="CvBasic:CvWindow" priority="1" bump="0">
+					<param name="count">2</param>
+					<param name="title">LeftCamera,RightCamera</param>
+				</Component>
+			</Executor>
+		</Subtask>	
+	</Subtasks>
+	
+	<!-- pipes connecting datastreams -->
+	<DataStreams>
+		<Source name="SourceLeft.out_img">
+			<sink>Window.in_img0</sink>
+		</Source>
+		<Source name="SourceRight.out_img">
+			<sink>Window.in_img1</sink>
+		</Source>
+	</DataStreams>
+</Task>
+

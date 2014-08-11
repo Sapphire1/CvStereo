@@ -23,7 +23,7 @@
 					<param name="sequence.directory">/home/dkaczmar/stereo/output/</param>
 					<param name="sequence.pattern">*</param>
 					<param name="mode.loop">1</param>
-					<param name="mode.triggered">1</param>						
+					<param name="mode.auto_trigger">1</param>						
 				</Component>
 				<Component name="DepthConventer" type="CvStereo:DepthConventer" priority="6" bump="0">
 				</Component>
@@ -43,14 +43,10 @@
 		</Subtask>	
 	</Subtasks>
 	
-	<!-- connections between events and handelrs -->
-	<Events>
-	</Events>
-	
 	<!-- pipes connecting datastreams -->
 	<DataStreams>
 		<Source name="NextImageTrigger.out_trigger">
-			<sink>Sequence.in_load_next_image_trigger</sink>
+			<sink>Sequence.in_trigger</sink>
 		</Source>
 		<Source name="Sequence.out_rgb_stereo">
 			<sink>DepthConventer.in_rgb_stereo</sink>

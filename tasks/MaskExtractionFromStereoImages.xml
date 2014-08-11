@@ -81,7 +81,7 @@
 					<param name="offset.x">0.075</param>
 					<param name="offset.y">-0.113</param>
 					<param name="offset.roll">3.14159265359</param>
-				</Component>
+				</Component-->
 				<Component name="SolveLocation" type="DCL_CvBasic:CalcObjectLocation" priority="14">
 				</Component>
 				<Component name="DepthTransform" type="CvStereo:DepthTransform" priority="15" bump="0">
@@ -180,7 +180,7 @@
 		</Source>
 		<Source name="CameraInfo.out_camera_info">
 			<sink>SolvePNP.in_camerainfo</sink>
-			<sink>Draw.in_camera_matrix</sink>
+			<!--sink>Draw.in_camera_matrix</sink-->
 			<sink>SolvePNPinv.in_camerainfo</sink>
 			<sink>Drawinv.in_camera_matrix</sink>
 		</Source>
