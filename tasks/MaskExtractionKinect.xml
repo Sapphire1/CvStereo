@@ -1,0 +1,149 @@
+<Task>
+	<!-- reference task information -->
+	<Reference>
+		<Author>
+			<name>Marta Lepicka</name>
+			<link></link>
+		</Author>
+		
+		<Description>
+			<brief>SIFTObjectModel:DetectCircles</brief>
+			<full>Detect circles on images loaded by sequence or via Kinect</full>	
+		</Description>
+	</Reference>
+	
+	<!-- task definition -->
+	<Subtasks>
+		<Subtask name="Main">
+			<Executor name="Processing"  period="0.2">
+			  
+				<Component name="Sequence" type="CameraNUI:CameraNUI" priority="1" bump="0">
+					<param name="lib">freenect</param>
+					<param name="skip_stop">1</param>
+					<param name="camera_mode">rgb</param>
+					<param name="sync">1</param>
+					<param name="index">0</param>
+				</Component>
+				<Component name="DepthConverter" type="CameraNUI:DepthConverter" priority="2" bump="0">
+					<param name="depth_mode">point_cloud</param>
+				</Component>
+				<Component name="CameraInfo" type="CvCoreTypes:CameraInfoProvider" priority="3" bump="0">
+					<param name="camera_matrix">525 0 319.5; 0 525 239.5; 0 0 1</param>
+					<param name="dist_coeffs">0.18126525 -0.39866885 0.00000000 0.00000000 0.00000000</param>
+				</Component>
+				 <Component name="CenterMassGenerator" type="CvStereo:CenterMassGenerator" priority="4" bump="0">
+				</Component>
+				<Component name="DetectCircles" type="DCL_CvBasic:CvFindCirclesGrid" priority="5">
+					<param name="chessboard.board_width">3</param>
+					<param name="chessboard.board_height">5</param>
+					<param name="chessboard.square_size">0.06</param>
+				</Component>
+				<Component name="DetectCirclesInv" type="DCL_CvBasic:CvFindCirclesGrid" priority="6">
+					<param name="chessboard.board_width">3</param>
+					<param name="chessboard.board_height">5</param>
+					<param name="chessboard.square_size">0.06</param>
+					<param name="image.inverse">1</param>
+				</Component>
+				<Component name="SolvePNP" type="DCL_CvBasic:CvSolvePnP" priority="8">
+					<param name="offset.x">0.075</param>
+					<param name="offset.y">0.233</param>
+					<param name="offset.roll">3.14159265359</param>
+				</Component>
+				<Component name="SolvePNPinv" type="DCL_CvBasic:CvSolvePnP" priority="7">
+					<param name="offset.x">0.075</param>
+					<param name="offset.y">-0.113</param>
+					<param name="offset.roll">3.14159265359</param>
+				</Component>
+				<Component name="SolveLocation" type="DCL_CvBasic:CalcObjectLocation" priority="9" bump="0">
+				</Component>
+				<Component name="Draw" type="SIFTObjectModel:DrawCSystem" priority="10">
+				</Component>
+				
+				<Component name="XYZ2Rainbow" type="CvStereo:DepthRainbow" priority="12" bump="0">
+				</Component>
+
+				<Component name="DepthTransform" type="CvStereo:DepthTransform" priority="13" bump="-2">
+				</Component>
+				
+				<Component name="XYZ2RainbowTransformed" type="CvStereo:DepthRainbow" priority="14" bump="0">
+				</Component>
+
+				<Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="15" bump="0">
+					<param name="BlueAxis(X).prop_BlueAxisMin">-0.5</param>SequenceDepth
+					<param name="BlueAxis(X).prop_BlueAxisMax">0.5</param>
+					<param name="GreenAxis(Y).prop_GreenAxisMin">-0.5</param>
+					<param name="GreenAxis(Y).prop_GreenAxisMax">0.5</param>
+					<param name="RedAxis(Z).prop_RedAxisMin">-0.5</param>
+					<param name="RedAxis(Z).prop_RedAxisMax">0.5</param>
+				</Component>
+			</Executor>
+			<Executor name="Visualization" period="0.1">
+				<Component name="Window" type="DCL_CvBasic:CvWindow" priority="1" bump="0">
+					<param name="count">4</param>
+					<param name="title">Window,XYZ,Transformed,Mask</param>
+				</Component>
+			</Executor>
+		</Subtask>
+	</Subtasks>
+	
+	<!-- pipes connecting datastreams -->
+	<DataStreams>
+		<Source name="Sequence.out_img">
+			<sink>DetectCircles.in_img</sink>
+			<sink>DetectCirclesInv.in_img</sink>
+			<sink>Window.in_img0</sink>	
+		</Source>
+		<Source name="Sequence.out_depth">
+			<sink>DepthConverter.in_depth</sink>	
+		</Source>
+		<Source name="DepthConverter.out_img">
+		  	<sink>DepthTransform.in_image_xyz</sink>
+			<sink>CenterMassGenerator.in_image_xyz</sink>
+			<sink>XYZ2Rainbow.in_depth_mono</sink>
+		      </Source>
+		<Source name="DetectCircles.out_chessboard">
+			<sink>SolvePNP.in_object3d</sink>		
+		</Source>
+		<Source name="DetectCirclesInv.out_chessboard">
+			<sink>SolvePNPinv.in_object3d</sink>	
+		</Source>
+		<Source name="CameraInfo.out_camera_info">
+			<sink>SolvePNP.in_camerainfo</sink>
+			<sink>Draw.in_camera_matrix</sink>
+			<sink>SolvePNPinv.in_camerainfo</sink>
+		</Source>
+		<Source name = "SolvePNPinv.out_homogMatrix">
+			<sink>SolveLocation.in_homogMatrix</sink>
+		</Source>
+		<Source name= "SolvePNP.out_homogMatrix">
+			<sink>SolveLocation.in_homogMatrix</sink>
+		</Source>
+		<Source name= "SolveLocation.out_homogMatrix">
+			<sink>Draw.in_homogMatrix</sink>
+			<sink>DepthTransform.in_homogMatrix</sink>
+		</Source>
+		<Source name="Draw.out_csystem">
+			<sink>Window.in_draw0</sink>		
+		</Source>
+		<Source name="CenterMassGenerator.out_centerMassPoint">
+			<sink>CubicMaskExtractor.in_centerMassPoint</sink>
+		</Source>
+		<Source name="DepthTransform.out_image_xyz">
+			<sink>CubicMaskExtractor.in_image_xyz</sink>
+			<sink>XYZ2RainbowTransformed.in_depth_mono</sink>
+		</Source>
+		<Source name="XYZ2Rainbow.out_depth_rainbow">
+			<sink>Window.in_img1</sink>
+		</Source>
+		<Source name="XYZ2RainbowTransformed.out_depth_rainbow">
+			<sink>Window.in_img2</sink>
+		</Source>
+		<Source name="CubicMaskExtractor.out_mask">
+		    <sink>Window.in_img3</sink>
+		 </Source>
+	</DataStreams>
+</Task>
+
+
+
+
