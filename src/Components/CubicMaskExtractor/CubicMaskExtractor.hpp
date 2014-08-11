@@ -102,7 +102,7 @@ protected:
 	// Input data streams
 
 	Base::DataStreamIn <cv::Mat>  in_image_xyz;
-	Base::DataStreamIn <cv::Point3d> in_centerMassPoint;
+	//Base::DataStreamIn <cv::Point3d> in_centerMassPoint;
 	// Output data streams
 	Base::DataStreamOut <cv::Mat> out_mask;
 	

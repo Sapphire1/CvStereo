@@ -156,10 +156,6 @@
 		<Source name="StereoEstimator.out_depth_xyz">
 			<sink>WindowXYZRainbow.in_depth_mono</sink>
 			<sink>DepthTransform.in_image_xyz</sink>
-			<sink>CenterMassGenerator.in_image_xyz</sink>
-		</Source>
-		<Source name="CenterMassGenerator.out_centerMassPoint">
-			<sink>CubicMaskExtractor.in_centerMassPoint</sink>
 		</Source>
 		<Source name="WindowXYZRainbow.out_depth_rainbow">
 			<sink>WindowXYZ.in_img</sink>

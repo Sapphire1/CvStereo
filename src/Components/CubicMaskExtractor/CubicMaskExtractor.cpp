@@ -21,12 +21,12 @@ namespace CubicMaskExtractor {
 
 CubicMaskExtractor::CubicMaskExtractor(const std::string & name) :
 		Base::Component(name),
-		prop_XAxisMin_treshold("ransacFilter.XAxisMin_treshold", -0.5),
-		prop_XAxisMax_treshold("ransacFilter.XAxisMax_treshold", 2.0),
-		prop_YAxisMin_treshold("ransacFilter.YAxisMin_treshold", -2.0),
-		prop_YAxisMax_treshold("ransacFilter.YAxisMax_treshold", 1.0),
-		prop_ZAxisMin_treshold("ransacFilter.ZAxisMin_treshold", 0.5),
-		prop_ZAxisMax_treshold("ransacFilter.ZAxisMax_treshold", 2.0)
+		prop_XAxisMin_treshold("BlueAxis(X)..prop_BlueAxisMin", -2.0),
+		prop_XAxisMax_treshold("BlueAxis(X)..prop_BlueAxisMax", 2.0),
+		prop_YAxisMin_treshold("GreenAxis(Y).prop_GreenAxisMin", -2.0),
+		prop_YAxisMax_treshold("GreenAxis(Y).prop_GreenAxisMax", 2.0),
+		prop_ZAxisMin_treshold("RedAxis(Z).prop_RedAxisMin", -2.0),
+		prop_ZAxisMax_treshold("RedAxis(Z).prop_RedAxisMax", 2.0)
 {
 		prop_XAxisMin_treshold.addConstraint("-5.0");
 		prop_XAxisMin_treshold.addConstraint("5.0");
@@ -56,7 +56,7 @@ void CubicMaskExtractor::prepareInterface() {
   
 	// Register data streams, events and event handlers HERE!
 	registerStream("in_image_xyz", &in_image_xyz);
-	registerStream("in_centerMassPoint", &in_centerMassPoint);
+	//registerStream("in_centerMassPoint", &in_centerMassPoint);
 	registerStream("out_mask", &out_mask);
 	
 	// Register handlers
@@ -87,28 +87,28 @@ void CubicMaskExtractor::filter() {
   
   // create images
   cv::Mat depth_image = in_image_xyz.read();
-  cv::Point3d centerMassPoint = in_centerMassPoint.read();
+  //cv::Point3d centerMassPoint = in_centerMassPoint.read();
   cv::Size depth_size = depth_image.size();
+   //cv::Point3d point = cv::Point3d(0.0,0.0,0.0);
   
-  double centerX = (double) centerMassPoint.x;
-  double centerY = (double) centerMassPoint.y;
-  double centerZ = (double) centerMassPoint.z;
+  double centerX = 0.0;
+  double centerY = 0.0;
+  double centerZ = 0.0;
   
-  double xL= centerMassPoint.x-prop_XAxisMin_treshold;
-  double xH= centerMassPoint.x+prop_XAxisMax_treshold;
+  double xL= centerX+prop_XAxisMin_treshold;
+  double xH= centerX+prop_XAxisMax_treshold;
   
-  double yL= centerMassPoint.y-prop_YAxisMin_treshold;
-  double yH= centerMassPoint.y+prop_YAxisMax_treshold;
+  double yL= centerY+prop_YAxisMin_treshold;
+  double yH= centerY+prop_YAxisMax_treshold;
    
-  double zL= centerMassPoint.z-prop_ZAxisMin_treshold;
-  double zH= centerMassPoint.z+prop_ZAxisMax_treshold;
+  double zL= centerZ+prop_ZAxisMin_treshold;
+  double zH= centerZ+prop_ZAxisMax_treshold;
   
   cv::Mat tmp_img;
   tmp_img.create(depth_size, CV_8UC1);
  
 	std::cout << "Limity\n"<<"xL "<< xL<<"\txH "<< xH<< "\tyL " <<yL<<"\tyH "<< yH <<"\tzL "<< zL <<"\tzH " <<zH<<"\n";
 	
-	// iteracja po obrazie glebi, podstawienie pod maske odpowiednich pikseli
         if (depth_image.isContinuous() && tmp_img.isContinuous()) {
          depth_size.width *= depth_size.height;
          depth_size.height = 1;
