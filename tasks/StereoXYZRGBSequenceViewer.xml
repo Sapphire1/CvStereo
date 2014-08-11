@@ -9,7 +9,7 @@
 	
 		<Description>
 			<brief>Disparity viewer</brief>
-			<full>Generate and displays depth map generated from stereo-images</full>
+			<full>Displays a sequence of  stereo-images (RGB and depth XYZ).</full>
 		</Description>
 	</Reference>
 
@@ -27,17 +27,20 @@
 				</Component>
 				<Component name="DepthConventer" type="CvStereo:DepthConventer" priority="6" bump="0">
 				</Component>
+			</Executor>
 
-			</Executor>
-			<Executor name="DisplayExec" period="1">
-				<Component name="WindowCloud" type="PCL:CloudViewer" priority="1" bump="0">
-					<param name="window_name">Depth Cloud</param>
-				</Component>
-			</Executor>
 			<Executor name="WriterExec" period="1">
 				<Component name="StereoWriter" type="CvStereo:StereoWriter" priority="1" bump="0">
 					<param name="save.directory">/home/dkaczmar/stereo/output/</param>
 					<param name="save.filename">stereo_img</param>
+				</Component>
+			</Executor>
+		</Subtask>	
+
+		<Subtask name="Display">
+			<Executor name="DisplayExec" period="1">
+				<Component name="WindowCloud" type="PCL:CloudViewer" priority="1" bump="0">
+					<param name="window_name">Depth Cloud</param>
 				</Component>
 			</Executor>
 		</Subtask>	

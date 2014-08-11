@@ -9,14 +9,14 @@
 	
 		<Description>
 			<brief>Displays images from Velma stereo pair</brief>
-			<full>Displays left and right images acquired from the stereo pair mounted on Velma head</full>
+			<full>Displays left and right images acquired from the stereo pair mounted on Velma head. Enables writing LR pair to files.</full>
 		</Description>
 	</Reference>
 
 	<!-- task definition -->
 	<Subtasks>
-		<Subtask name="Processing">
-			<Executor name="ExecDisp" period="1">
+		<Subtask name="Main">
+			<Executor name="Processing" period="1">
 				<Component name="SourceLeft" type="CameraPGR:CameraPGR" priority="1" bump="-1">
 					<!--<param name="device">1</param>-->
 					<param name="camera_serial">13201068</param>
@@ -34,7 +34,20 @@
 					<param name="data_file">%[TASK_LOCATION]%/../data/velma-stereo/right.yml</param>
 				</Component>
 			</Executor>
-			<Executor name="DisplayExec" period="0.5">
+			<Executor name="Writing" period="0.1">
+				<Component name="ImageWriter" type="CvBasic:ImageWriter" priority="1" bump="0">
+					<param name="directory">%[TASK_LOCATION]%/../data/</param>
+					<param name="count">2</param>
+					<param name="digits">1</param>
+					<param name="base_name">left,right</param>
+					<param name="format">png,png</param>
+					<param name="mode.auto_trigger">0</param>
+				</Component>
+			</Executor>
+		</Subtask>	
+
+		<Subtask name="Display">
+			<Executor name="Display" period="0.5">
 				<Component name="Window" type="CvBasic:CvWindow" priority="1" bump="0">
 					<param name="count">2</param>
 					<param name="title">LeftCamera,RightCamera</param>
@@ -47,9 +60,11 @@
 	<DataStreams>
 		<Source name="SourceLeft.out_img">
 			<sink>Window.in_img0</sink>
+			<sink>ImageWriter.in_img0</sink>
 		</Source>
 		<Source name="SourceRight.out_img">
 			<sink>Window.in_img1</sink>
+			<sink>ImageWriter.in_img1</sink>
 		</Source>
 	</DataStreams>
 </Task>
