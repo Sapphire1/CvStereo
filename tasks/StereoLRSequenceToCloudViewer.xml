@@ -9,27 +9,27 @@
 	
 		<Description>
 			<brief>Displays point cloud generated from stereo</brief>
-			<full>Generates and displays point cloud generated from stereo-images (LR). Enables to write the RGB-D (a pair of RGB and XYZ images) to file.</full>
+			<full>Displays point clouds generated from a sequence of stereo-images (LR). Enables writing of point cloud to PCD files.</full>
 		</Description>
 	</Reference>
 
 	<!-- task definition -->
 	<Subtasks>
 		<Subtask name="Processing">
-			<Executor name="ExecDisp" period="1">
+			<Executor name="ExecDisp" period="2">
 				<Component name="NextImageTrigger" type="CvBasic:Trigger" priority="1" bump="0">
 				</Component>
 				<Component name="SequenceLeft" type="CvBasic:Sequence" priority="2" bump="0">
 					<param name="sequence.directory">%[TASK_LOCATION]%/../data/bible_lr/</param>
 					<param name="sequence.pattern">left_.*\.png</param>
 					<param name="mode.loop">1</param>
-					<param name="mode.auto_trigger">1</param>						
+					<param name="mode.auto_trigger">0</param>						
 				</Component>
 				<Component name="SequenceRight" type="CvBasic:Sequence" priority="3" bump="0">
 					<param name="sequence.directory">%[TASK_LOCATION]%/../data/bible_lr/</param>
 					<param name="sequence.pattern">right_.*\.png</param>
 					<param name="mode.loop">1</param>
-					<param name="mode.auto_trigger">1</param>					
+					<param name="mode.auto_trigger">0</param>					
 				</Component>
 				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
 					<param name="data_file">%[TASK_LOCATION]%/../data/velma-stereo/left.yml</param>
@@ -42,19 +42,18 @@
 					<param name="numberOfDisparities">320</param>
 					<param name="uniquenessRatio">25</param>
 				</Component>
-				<Component name="DepthConventer" type="CvStereo:DepthConventer" priority="6" bump="0">
+				<Component name="DepthConventer" type="CvStereo:DepthConventer" priority="7" bump="0">
 				</Component>
-
+				<Component name="PCDWriter" type="PCL:PCDWriter" priority="8" bump="0">
+					<param name="filename">%[TASK_LOCATION]%/../data/output.pcd</param>
+				</Component>
 			</Executor>
-			<Executor name="DisplayExec" period="1">
+		</Subtask>	
+
+		<Subtask name="Display">
+			<Executor name="DisplayExec" period="0.5">
 				<Component name="WindowCloud" type="PCL:CloudViewer" priority="1" bump="0">
 					<param name="window_name">Depth Cloud</param>
-				</Component>
-			</Executor>
-			<Executor name="WriterExec" period="1">
-				<Component name="StereoWriter" type="CvStereo:StereoWriter" priority="1" bump="0">
-					<param name="save.directory">%[TASK_LOCATION]%/../data</param>
-					<param name="save.filename">stereo_img</param>
 				</Component>
 			</Executor>
 		</Subtask>	
@@ -80,14 +79,13 @@
 		</Source>
 		<Source name="StereoEstimator.out_rgb_stereo">
 			<sink>DepthConventer.in_rgb_stereo</sink>
-			<sink>StereoWriter.in_rgb_stereo</sink>
 		</Source>
 		<Source name="StereoEstimator.out_depth_xyz">
 			<sink>DepthConventer.in_depth_xyz</sink>
-			<sink>StereoWriter.in_depth_xyz</sink>
 		</Source>
 		<Source name="DepthConventer.out_cloud_xyzrgb">
 			<sink>WindowCloud.in_cloud_xyzrgb</sink>
+			<sink>PCDWriter.in_cloud_xyzrgb</sink>
 		</Source>
 	</DataStreams>
 </Task>

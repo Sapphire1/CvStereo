@@ -24,12 +24,17 @@ Call __make dataset__ from the build directory in order to download and unrar th
 Tasks
 ------------
 Velma acquisition:
-   * __VelmaStereoCameraViewer__ - Displays left and right images acquired from the stereo pair mounted on Velma head.
-   * __VelmaStereoCameraCloudViewer__ - Acquires stereo images from Velma head and transforms them into coloured point clouds.
+   * __VelmaStereoLRViewer__ - Displays left and right images acquired from the stereo pair mounted on Velma head. Enables writing of LR pairs to files. 
+   * __VelmaStereoToRGBXYZViewer__ - Displays a stereo (RGB and depth XYZ) images acquired from Velma (LR) cameras. Enables writing of RGB-XYZ pairs to files (in png and yml format respectivelly).
+   * __VelmaStereoCameraToCloudViewer__ - Acquires stereo images from Velma head and transforms them into coloured point clouds. Enables saving of point clouds to PCD files. 
     
 Stereo sequences from files:   
    * __StereoLRSequenceViewer__ - Displays a sequence of left and right images acquired from a stereo pair.
-   * __StereoLRSequenceCloudViewer__ - Generates and displays point cloud generated from stereo-images (LR). Enables to write the RGB-D (a pair of RGB and XYZ images) to file.
+   * __StereoLRSequenceToRGBXYZViewer__ - Displays a sequence of stereo (RGB and depth XYZ) images generated from pairs of left-right (LR) camera images. Enables writing of RGB-XYZ pairs to files (in png and yml format respectivelly). 
+
+   * __StereoLRSequenceToCloudViewer__ - Displays point clouds generated from a sequence of stereo-images (LR). Enables writing of point cloud to PCD files.
+   * __StereoXYZRGBSequenceViewer__ - Displays a sequence of  stereo-images (RGB and depth XYZ).
+
 
 Developers
 ----------

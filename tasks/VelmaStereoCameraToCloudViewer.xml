@@ -9,7 +9,7 @@
 	
 		<Description>
 			<brief>Displays point cloud generated on the basis of stereo images aquired from Velma</brief>
-			<full>Acquires stereo images from Velma head and transforms them into coloured point clouds</full>
+			<full>Acquires stereo images from Velma head and transforms them into coloured point clouds. Enables saving of point clouds to PCD files.</full>
 		</Description>
 	</Reference>
 
@@ -22,38 +22,36 @@
 					<param name="camera_serial">13201068</param>
 					<param name="pixel_format">RGB</param>
 				</Component>
-				<Component name="SourceRight" type="CameraPGR:CameraPGR" priority="1" bump="-1">
+				<Component name="SourceRight" type="CameraPGR:CameraPGR" priority="2" bump="-1">
 					<!--<param name="device">1</param>-->
 					<param name="camera_serial">13201080</param>
 					<param name="pixel_format">RGB</param>
 				</Component>
-				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
+				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="3" bump="0">
 					<param name="data_file">%[TASK_LOCATION]%/../data/velma-stereo/left.yml</param>
 				</Component>
-				<Component name="CameraInfoRight" type="CvCoreTypes:CameraInfoProvider" priority="5" bump="0">
+				<Component name="CameraInfoRight" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
 					<param name="data_file">%[TASK_LOCATION]%/../data/velma-stereo/right.yml</param>
 				</Component>
-				<Component name="StereoEstimator" type="CvStereo:StereoEstimator" priority="6" bump="0">
+				<Component name="StereoEstimator" type="CvStereo:StereoEstimator" priority="5" bump="0">
 					<param name="minDisparity">50</param>
 					<param name="numberOfDisparities">320</param>
 					<param name="uniquenessRatio">20</param>
 					<param name="preFilterCap">25</param>
 					<param name="speckleWindowSize">30</param>
 				</Component>
-				<Component name="DepthConventer" type="CvStereo:DepthConventer" priority="7" bump="0">
+				<Component name="DepthConventer" type="CvStereo:DepthConventer" priority="6" bump="0">
 				</Component>
-				<Component name="PCDWriter" type="PCL:PCDWriter" priority="9" bump="0">
+				<Component name="PCDWriter" type="PCL:PCDWriter" priority="7" bump="0">
 					<param name="filename">%[TASK_LOCATION]%/../data/output.pcd</param>
 				</Component>
 			</Executor>
-			<Executor name="DisplayExec" period="0.5">
-				<Component name="WindowLeft" type="CvBasic:CvWindow" priority="7" bump="0">
+		</Subtask>	
+
+		<Subtask name="Display">
+				<Component name="CloudViewer" type="PCL:CloudViewer" priority="1" bump="0">
 					<param name="count">1</param>
-					<param name="title">RGB Image</param>
-				</Component>
-				<Component name="WindowDepth" type="PCL:CloudViewer" priority="10" bump="0">
-					<param name="count">1</param>
-					<param name="title">Depth Cloud</param>
+					<param name="title">Stereo Cloud</param>
 				</Component>
 			</Executor>
 		</Subtask>	
@@ -80,7 +78,7 @@
 			<sink>DepthConventer.in_depth_xyz</sink>
 		</Source>
 		<Source name="DepthConventer.out_cloud_xyzrgb">
-			<sink>WindowDepth.in_cloud_xyzrgb</sink>
+			<sink>CloudViewer.in_cloud_xyzrgb</sink>
 			<sink>PCDWriter.in_cloud_xyzrgb</sink>
 		</Source>
 	</DataStreams>

@@ -27,7 +27,7 @@ DepthRainbow::~DepthRainbow() {
 
 void DepthRainbow::prepareInterface() {
 	// Register data streams, events and event handlers HERE!
-    registerStream("in_depth_mono", &in_depth_xyz);
+    registerStream("in_depth_xyz", &in_depth_xyz);
     registerStream("out_depth_rainbow", &out_depth_rainbow);
 
 	// Register handlers
