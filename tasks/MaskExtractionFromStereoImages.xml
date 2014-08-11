@@ -16,9 +16,9 @@
 	<Subtasks>
 		<Subtask name="Main">
 			<Executor name="Processing"  period="0.2">
-				<Component name="NextImageTrigger" type="DCL_CvBasic:Trigger" priority="1" bump="0">
+				<Component name="NextImageTrigger" type="CvBasic:Trigger" priority="1" bump="0">
 				</Component>
-				<Component name="SequenceLeft" type="DCL_CvBasic:Sequence" priority="2" bump="0">
+				<Component name="SequenceLeft" type="CvBasic:Sequence" priority="2" bump="0">
 					<param name="sequence.directory">/home/discode/14.08 (kopia).11objects/loyd/left/</param>
 					<param name="sequence.pattern">.*\.png</param>
 					<param name="mode.loop">0</param>
@@ -26,7 +26,7 @@
 					<param name="mode.iterate">0</param>
 					<param name="mode.auto_trigger">0</param>
 				</Component>
-				<Component name="SequenceRight" type="DCL_CvBasic:Sequence" priority="3" bump="0">
+				<Component name="SequenceRight" type="CvBasic:Sequence" priority="3" bump="0">
 					<param name="sequence.directory">/home/discode/14.08 (kopia).11objects/loyd/right/</param>
 					<param name="sequence.pattern">.*\.png</param>
 					<param name="mode.loop">0</param>
@@ -49,28 +49,28 @@
 					<param name="preFilterCap">25</param>
 					<param name="speckleWindowSize">30</param>
 				</Component>
-				<Component name="DetectCircles" type="DCL_CvBasic:CvFindCirclesGrid" priority="7">
+				<Component name="DetectCircles" type="CvBasic:CvFindCirclesGrid" priority="7">
 					<param name="chessboard.board_width">3</param>
 					<param name="chessboard.board_height">5</param>
 					<param name="chessboard.square_size">0.06</param>
 				</Component>
-				<Component name="DetectCirclesInv" type="DCL_CvBasic:CvFindCirclesGrid" priority="8">
+				<Component name="DetectCirclesInv" type="CvBasic:CvFindCirclesGrid" priority="8">
 					<param name="chessboard.board_width">3</param>
 					<param name="chessboard.board_height">5</param>
 					<param name="chessboard.square_size">0.06</param>
 					<param name="image.inverse">1</param>
 				</Component>				
-				<Component name="SolvePNP" type="DCL_CvBasic:CvSolvePnP" priority="12">
+				<Component name="SolvePNP" type="CvBasic:CvSolvePnP" priority="12">
 					<param name="offset.x">0.075</param>
 					<param name="offset.y">0.233</param>
 					<param name="offset.roll">3.14159265359</param>
 				</Component>
-				<Component name="SolvePNPinv" type="DCL_CvBasic:CvSolvePnP" priority="13">
+				<Component name="SolvePNPinv" type="CvBasic:CvSolvePnP" priority="13">
 					<param name="offset.x">0.075</param>
 					<param name="offset.y">-0.113</param>
 					<param name="offset.roll">3.14159265359</param>
 				</Component-->
-				<Component name="SolveLocation" type="DCL_CvBasic:CalcObjectLocation" priority="14">
+				<Component name="SolveLocation" type="CvBasic:CalcObjectLocation" priority="14">
 				</Component>
 				<Component name="DepthTransform" type="CvStereo:DepthTransform" priority="15" bump="0">
 				</Component>
@@ -88,11 +88,11 @@
 				</Component>
 			</Executor>
 			<Executor name="DisplayExec" period="1">
-				<Component name="Window" type="DCL_CvBasic:CvWindow" priority="1" bump="0">
+				<Component name="Window" type="CvBasic:CvWindow" priority="1" bump="0">
 					<param name="count">2</param>
 					<param name="title">Window,WindowInverse</param>
 				</Component>
-				<Component name="WindowMask" type="DCL_CvBasic:CvWindow" priority="4" bump="0">
+				<Component name="WindowMask" type="CvBasic:CvWindow" priority="4" bump="0">
 					<param name="count">1</paraDepthTransformm>
 					<param name="title">Mask</param>
 				</Component>
