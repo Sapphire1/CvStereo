@@ -21,12 +21,12 @@ namespace CubicMaskExtractor {
 
 CubicMaskExtractor::CubicMaskExtractor(const std::string & name) :
 		Base::Component(name),
-		prop_XAxisMin_treshold("BlueAxis(X)..prop_BlueAxisMin", -2.0),
-		prop_XAxisMax_treshold("BlueAxis(X)..prop_BlueAxisMax", 2.0),
-		prop_YAxisMin_treshold("GreenAxis(Y).prop_GreenAxisMin", -2.0),
-		prop_YAxisMax_treshold("GreenAxis(Y).prop_GreenAxisMax", 2.0),
-		prop_ZAxisMin_treshold("RedAxis(Z).prop_RedAxisMin", -2.0),
-		prop_ZAxisMax_treshold("RedAxis(Z).prop_RedAxisMax", 2.0)
+		prop_XAxisMin_treshold("BlueAxis(X).X_Min", -2.0),
+		prop_XAxisMax_treshold("BlueAxis(X).X_Max", 2.0),
+		prop_YAxisMin_treshold("GreenAxis(Y).Y_Min", -2.0),
+		prop_YAxisMax_treshold("GreenAxis(Y).Y_Max", 2.0),
+		prop_ZAxisMin_treshold("RedAxis(Z).Z_Min", -2.0),
+		prop_ZAxisMax_treshold("RedAxis(Z).Z_Max", 2.0)
 {
 		prop_XAxisMin_treshold.addConstraint("-5.0");
 		prop_XAxisMin_treshold.addConstraint("5.0");
@@ -91,18 +91,14 @@ void CubicMaskExtractor::filter() {
   cv::Size depth_size = depth_image.size();
    //cv::Point3d point = cv::Point3d(0.0,0.0,0.0);
   
-  double centerX = 0.0;
-  double centerY = 0.0;
-  double centerZ = 0.0;
+  double xL= prop_XAxisMin_treshold;
+  double xH= prop_XAxisMax_treshold;
   
-  double xL= centerX+prop_XAxisMin_treshold;
-  double xH= centerX+prop_XAxisMax_treshold;
-  
-  double yL= centerY+prop_YAxisMin_treshold;
-  double yH= centerY+prop_YAxisMax_treshold;
+  double yL= prop_YAxisMin_treshold;
+  double yH= prop_YAxisMax_treshold;
    
-  double zL= centerZ+prop_ZAxisMin_treshold;
-  double zH= centerZ+prop_ZAxisMax_treshold;
+  double zL= prop_ZAxisMin_treshold;
+  double zH= prop_ZAxisMax_treshold;
   
   cv::Mat tmp_img;
   tmp_img.create(depth_size, CV_8UC1);

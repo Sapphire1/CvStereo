@@ -19,7 +19,7 @@
 				<Component name="NextImageTrigger" type="DCL_CvBasic:Trigger" priority="1" bump="0">
 				</Component>
 				<Component name="SequenceLeft" type="DCL_CvBasic:Sequence" priority="2" bump="0">
-					<param name="sequence.directory">/home/discode/14.08.08objects/stereo/inka/left/</param>
+					<param name="sequence.directory">/home/discode/14.08 (kopia).11objects/loyd/left/</param>
 					<param name="sequence.pattern">.*\.png</param>
 					<param name="mode.loop">0</param>
 					<param name="mode.sort">1</param>
@@ -27,7 +27,7 @@
 					<param name="mode.auto_trigger">0</param>
 				</Component>
 				<Component name="SequenceRight" type="DCL_CvBasic:Sequence" priority="3" bump="0">
-					<param name="sequence.directory">/home/discode/14.08.08objects/stereo/inka/right/</param>
+					<param name="sequence.directory">/home/discode/14.08 (kopia).11objects/loyd/right/</param>
 					<param name="sequence.pattern">.*\.png</param>
 					<param name="mode.loop">0</param>
 					<param name="mode.sort">1</param>
@@ -35,11 +35,11 @@
 					<param name="mode.auto_trigger">0</param>
 				</Component>
 				<Component name="CameraInfoLeft" type="CvCoreTypes:CameraInfoProvider" priority="4" bump="0">
-					<param name="data_file">/home/dkaczmar/stereo/info/left.yml</param>
+					<param name="data_file">/home/discode/14.08.11objects/calib/left.yml</param>
 					<param name="reload_file_opt">1</param>
 				</Component>
 				<Component name="CameraInfoRight" type="CvCoreTypes:CameraInfoProvider" priority="5" bump="0">
-					<param name="data_file">/home/dkaczmar/stereo/info/right.yml</param>
+					<param name="data_file">/home/discode/14.08.11objects/calib/right.yml</param>
 					<param name="reload_file_opt">1</param>
 				</Component>
 				<Component name="StereoEstimator" type="CvStereo:StereoEstimator" priority="6" bump="0">
@@ -59,19 +59,7 @@
 					<param name="chessboard.board_height">5</param>
 					<param name="chessboard.square_size">0.06</param>
 					<param name="image.inverse">1</param>
-				</Component>
-				  <Component name="CenterMassGenerator" type="CvStereo:CenterMassGenerator" priority="9" bump="0">
-				</Component>
-				<Component name="WindowXYZRainbow" type="CvStereo:DepthRainbow" priority="10" bump="0">
-					<param name="count">1</param>
-					<param name="title">XYZ</param>
-				</Component>
-				<Component name="CameraInfo" type="CvCoreTypes:CameraInfoProvider" priority="11" bump="1">
-					<param name="camera_matrix">1540.0447781112405 0.0 619.5322437565924; 0, 1532.103992838323 521.8407045845933; 0 0 1</param>
-					<param name="dist_coeffs">-0.23148743003437558 0.1839897092935131 0.003169284509443375 0.00048336015954902504 0</param>
-					<param name="reload_file_opt">0</param>
-				</Component>
-				
+				</Component>				
 				<Component name="SolvePNP" type="DCL_CvBasic:CvSolvePnP" priority="12">
 					<param name="offset.x">0.075</param>
 					<param name="offset.y">0.233</param>
@@ -86,35 +74,23 @@
 				</Component>
 				<Component name="DepthTransform" type="CvStereo:DepthTransform" priority="15" bump="0">
 				</Component>
-				<Component name="WindowTransformedRainbow" type="CvStereo:DepthRainbow" priority="16" bump="0">
-					<param name="count">1</param>
-					<param name="title">Transformed</param>
-				</Component>
 				<Component name="Draw" type="SIFTObjectModel:DrawCSystem" priority="17">
 				</Component>
 				<Component name="Drawinv" type="SIFTObjectModel:DrawCSystem" priority="18">
 				</Component>
 				<Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="19" bump="0">
-					<param name="BlueAxis(X).prop_BlueAxisMin">-0.2</param>
-					<param name="BlueAxis(X).prop_BlueAxisMax">0.3</param>
-					<param name="GreenAxis(Y).prop_GreenAxisMin">-0.25</param>
-					<param name="GreenAxis(Y).prop_GreenAxisMax">0.2</param>
-					<param name="RedAxis(Z).prop_RedAxisMin">-0.1</param>
-					<param name="RedAxis(Z).prop_RedAxisMax">0.3</param>
+					<param name="BlueAxis(X).X_Min">-0.7</param>
+					<param name="BlueAxis(X).X_Max">0.5</param>
+					<param name="GreenAxis(Y).Y_Min">-1.0</param>
+					<param name="GreenAxis(Y).Y_Max">1.0</param>
+					<param name="RedAxis(Z).Z_Min">-0.47</param>
+					<param name="RedAxis(Z).Z_Max">1.0</param>
 				</Component>
 			</Executor>
 			<Executor name="DisplayExec" period="1">
 				<Component name="Window" type="DCL_CvBasic:CvWindow" priority="1" bump="0">
 					<param name="count">2</param>
 					<param name="title">Window,WindowInverse</param>
-				</Component>
-				<Component name="WindowTransformed" type="DCL_CvBasic:CvWindow" priority="2" bump="0">
-					<param name="count">1</param>
-					<param name="title">Transformed</param>
-				</Component>
-				<Component name="WindowXYZ" type="DCL_CvBasic:CvWindow" priority="3" bump="0">
-					<param name="count">1</param>
-					<param name="title">XYZ</param>
 				</Component>
 				<Component name="WindowMask" type="DCL_CvBasic:CvWindow" priority="4" bump="0">
 					<param name="count">1</paraDepthTransformm>
@@ -154,14 +130,7 @@
 			<sink>Window.in_img1</sink>
 		</Source>
 		<Source name="StereoEstimator.out_depth_xyz">
-			<sink>WindowXYZRainbow.in_depth_mono</sink>
 			<sink>DepthTransform.in_image_xyz</sink>
-		</Source>
-		<Source name="WindowXYZRainbow.out_depth_rainbow">
-			<sink>WindowXYZ.in_img</sink>
-		</Source>
-		<Source name="WindowTransformedRainbow.out_depth_rainbow">
-			<sink>WindowTransformed.in_img</sink>
 		</Source>
 		<Source name="CubicMaskExtractor.out_mask">
 		    <sink>WindowMask.in_img</sink>
@@ -174,9 +143,8 @@
 			<sink>Window.in_draw0</sink>
 			<sink>SolvePNPinv.in_object3d</sink>		
 		</Source>
-		<Source name="CameraInfo.out_camera_info">
+		<Source name="CameraInfoLeft.out_camera_info">
 			<sink>SolvePNP.in_camerainfo</sink>
-			<!--sink>Draw.in_camera_matrix</sink-->
 			<sink>SolvePNPinv.in_camerainfo</sink>
 			<sink>Drawinv.in_camera_matrix</sink>
 		</Source>
@@ -199,7 +167,6 @@
 		</Source>
 		<Source name="DepthTransform.out_image_xyz">
 			<sink>CubicMaskExtractor.in_image_xyz</sink>
-			<sink>WindowTransformedRainbow.in_depth_mono</sink>
 		</Source>
 	</DataStreams>
 </Task>

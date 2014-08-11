@@ -81,7 +81,7 @@ void DepthTransform::DepthTransformation() {
             depth_size.width *= 3;
 	    
 	    
-	    rotationMatrix.at<double>(0,0)= hm.elements[0][0];
+	    rotationMatrix.at<double>(0,0)=hm.elements[0][0];
 	    rotationMatrix.at<double>(0,1)=hm.elements[0][1];
 	    rotationMatrix.at<double>(0,2)=hm.elements[0][2];
 	    
@@ -94,8 +94,8 @@ void DepthTransform::DepthTransformation() {
 	    rotationMatrix.at<double>(2,2)=hm.elements[2][2];
 	  
 	    tvec.at<double>(0,0) = hm.elements[3][0];
-	    tvec.at<double>(0,1) = hm.elements[3][1];
-	    tvec.at<double>(0,2) = hm.elements[3][2];
+	    tvec.at<double>(1,0) = hm.elements[3][1];
+	    tvec.at<double>(2,0) = hm.elements[3][2];
 	   
 	    rotationMatrix=rotationMatrix.t();
 	    

@@ -31,8 +31,6 @@
 					<param name="camera_matrix">525 0 319.5; 0 525 239.5; 0 0 1</param>
 					<param name="dist_coeffs">0.18126525 -0.39866885 0.00000000 0.00000000 0.00000000</param>
 				</Component>
-				 <Component name="CenterMassGenerator" type="CvStereo:CenterMassGenerator" priority="4" bump="0">
-				</Component>
 				<Component name="DetectCircles" type="DCL_CvBasic:CvFindCirclesGrid" priority="5">
 					<param name="chessboard.board_width">3</param>
 					<param name="chessboard.board_height">5</param>
@@ -53,7 +51,7 @@
 					<param name="offset.x">0.075</param>
 					<param name="offset.y">-0.113</param>
 					<param name="offset.roll">3.14159265359</param>
-				</Component>
+ 				</Component>
 				<Component name="SolveLocation" type="DCL_CvBasic:CalcObjectLocation" priority="9" bump="0">
 				</Component>
 				<Component name="Draw" type="SIFTObjectModel:DrawCSystem" priority="10">
@@ -68,13 +66,13 @@
 				<Component name="XYZ2RainbowTransformed" type="CvStereo:DepthRainbow" priority="14" bump="0">
 				</Component>
 
-				<Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="15" bump="0">
-					<param name="BlueAxis(X).prop_BlueAxisMin">-0.5</param>SequenceDepth
-					<param name="BlueAxis(X).prop_BlueAxisMax">0.5</param>
-					<param name="GreenAxis(Y).prop_GreenAxisMin">-0.5</param>
-					<param name="GreenAxis(Y).prop_GreenAxisMax">0.5</param>
-					<param name="RedAxis(Z).prop_RedAxisMin">-0.5</param>
-					<param name="RedAxis(Z).prop_RedAxisMax">0.5</param>
+				<Component name="CubicMaskExtractor" type="CvStereo:CubicMaskExtractor" priority="19" bump="0">
+					<param name="BlueAxis(X).X_Min">-0.7</param>
+					<param name="BlueAxis(X).X_Max">0.5</param>
+					<param name="GreenAxis(Y).Y_Min">-1.0</param>
+					<param name="GreenAxis(Y).Y_Max">1.0</param>
+					<param name="RedAxis(Z).Z_Min">-0.47</param>
+					<param name="RedAxis(Z).Z_Max">1.0</param>
 				</Component>
 			</Executor>
 			<Executor name="Visualization" period="0.1">
@@ -98,7 +96,6 @@
 		</Source>
 		<Source name="DepthConverter.out_img">
 		  	<sink>DepthTransform.in_image_xyz</sink>
-			<sink>CenterMassGenerator.in_image_xyz</sink>
 			<sink>XYZ2Rainbow.in_depth_mono</sink>
 		      </Source>
 		<Source name="DetectCircles.out_chessboard">
@@ -124,9 +121,6 @@
 		</Source>
 		<Source name="Draw.out_csystem">
 			<sink>Window.in_draw0</sink>		
-		</Source>
-		<Source name="CenterMassGenerator.out_centerMassPoint">
-			<sink>CubicMaskExtractor.in_centerMassPoint</sink>
 		</Source>
 		<Source name="DepthTransform.out_image_xyz">
 			<sink>CubicMaskExtractor.in_image_xyz</sink>
