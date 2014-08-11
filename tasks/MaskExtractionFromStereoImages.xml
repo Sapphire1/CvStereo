@@ -114,14 +114,10 @@
 			<sink>StereoEstimator.r_in_img</sink>
 		</Source>
 		<Source name="CameraInfoLeft.out_camera_info">
-			<param name="reload_file_opt">"true"</param>
 			<sink>StereoEstimator.l_cam_info</sink>
-			<param name="reload_file_opt">1</param>
 		</Source>
 		<Source name="CameraInfoRight.out_camera_info">
-			<param name="reload_file_opt">"true"</param>
 			<sink>StereoEstimator.r_cam_info</sink>
-			<param name="reload_file_opt">1</param>
 		</Source>
 		<Source name="StereoEstimator.out_rgb_stereo">
 			<sink>DetectCircles.in_img</sink>
@@ -132,9 +128,7 @@
 		<Source name="StereoEstimator.out_depth_xyz">
 			<sink>DepthTransform.in_image_xyz</sink>
 		</Source>
-		<Source name="CubicMaskExtractor.out_mask">
-		    <sink>WindowMask.in_img</sink>
-		</Source>
+		
 		<Source name="DetectCircles.out_chessboard">
 			<sink>SolvePNP.in_object3d</sink>	
 			<sink>Window.in_draw1</sink>
@@ -167,6 +161,9 @@
 		</Source>
 		<Source name="DepthTransform.out_image_xyz">
 			<sink>CubicMaskExtractor.in_image_xyz</sink>
+		</Source>
+		<Source name="CubicMaskExtractor.out_mask">
+		    <sink>WindowMask.in_img</sink>
 		</Source>
 	</DataStreams>
 </Task>

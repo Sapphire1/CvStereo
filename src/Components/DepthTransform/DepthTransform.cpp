@@ -66,8 +66,21 @@ bool DepthTransform::onStart() {
 void DepthTransform::DepthTransformation() {
 	try{
 	  
+	  
+	
+	  
 	  cv::Mat depth_image = in_image_xyz.read();
 	  HomogMatrix hm = in_homogMatrix.read();
+	  
+	  stringstream ss;
+	for (int i = 0; i < 3; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			ss << hm.elements[i][j] << "  ";
+		}
+	}
+	CLOG(LINFO) << "HomogMatrix:\n" << ss.str() << endl;
+	  
+	  
 	  
 	  cv::Size depth_size = depth_image.size();
 
@@ -92,10 +105,17 @@ void DepthTransform::DepthTransformation() {
 	    rotationMatrix.at<double>(2,0)=hm.elements[2][0];
 	    rotationMatrix.at<double>(2,1)=hm.elements[2][1];
 	    rotationMatrix.at<double>(2,2)=hm.elements[2][2];
-	  
-	    tvec.at<double>(0,0) = hm.elements[3][0];
-	    tvec.at<double>(1,0) = hm.elements[3][1];
-	    tvec.at<double>(2,0) = hm.elements[3][2];
+	   
+	    tvec.at<double>(0,0) = hm.elements[0][3];
+	    tvec.at<double>(1,0) = hm.elements[1][3];
+	    tvec.at<double>(2,0) = hm.elements[2][3];
+	    
+	    LOG(LINFO)<< " rotationMatrix " << rotationMatrix;
+	    
+	    LOG(LINFO)<<"hm" <<hm.elements[3][0] << hm.elements[3][1]<<hm.elements[3][2];
+
+	   
+	    LOG(LINFO)<< " tvec " << tvec;
 	   
 	    rotationMatrix=rotationMatrix.t();
 	    
